@@ -29,6 +29,7 @@ namespace Design_Patterns_Tekenprogramma
         private Point startPoint;
         private Point newPos;
         private Rectangle rect;
+        private bool drag = false;
 
 
         private void AddRectangleButton_Click(object sender, RoutedEventArgs e)
@@ -38,7 +39,6 @@ namespace Design_Patterns_Tekenprogramma
 
         private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            int test = 1;
 
             startPoint = e.GetPosition(canvas);
 
@@ -60,6 +60,7 @@ namespace Design_Patterns_Tekenprogramma
                 Canvas.SetTop(rect, startPoint.Y);
                 canvas.Children.Add(rect);
             }
+            
         }
 
         
@@ -69,20 +70,22 @@ namespace Design_Patterns_Tekenprogramma
             if (e.LeftButton == MouseButtonState.Released || rect == null || sender.GetType().Name == "Rectangle")
                 return;
 
+            if (drawmode)
+            {
+                var pos = e.GetPosition(canvas);
 
-            var pos = e.GetPosition(canvas);
+                var x = Math.Min(pos.X, startPoint.X);
+                var y = Math.Min(pos.Y, startPoint.Y);
 
-            var x = Math.Min(pos.X, startPoint.X);
-            var y = Math.Min(pos.Y, startPoint.Y);
+                var w = Math.Max(pos.X, startPoint.X) - x;
+                var h = Math.Max(pos.Y, startPoint.Y) - y;
 
-            var w = Math.Max(pos.X, startPoint.X) - x;
-            var h = Math.Max(pos.Y, startPoint.Y) - y;
+                rect.Width = w;
+                rect.Height = h;
 
-            rect.Width = w;
-            rect.Height = h;
-
-            Canvas.SetLeft(rect, x);
-            Canvas.SetTop(rect, y);
+                Canvas.SetLeft(rect, x);
+                Canvas.SetTop(rect, y);
+            }
         }
 
         private void Canvas_MouseUp(object sender, MouseButtonEventArgs e)
@@ -93,30 +96,35 @@ namespace Design_Patterns_Tekenprogramma
 
         private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            rect = (Rectangle)sender;
+            rect = sender as Rectangle;
             startPoint = e.GetPosition(canvas);
-
+            drag = true;
             
-            Canvas.SetLeft(rect, startPoint.X);
-            Canvas.SetTop(rect, startPoint.Y);
+            
         }
         private void Rectangle_MouseMove(object sender, MouseEventArgs e)
         {
             
             if (e.LeftButton == MouseButtonState.Released || rect == null)
                 return;
-            
-            newPos = e.GetPosition(canvas);
-            double x = Canvas.GetLeft(rect);
-            double y = Canvas.GetRight(rect);
 
-            Canvas.SetLeft(rect, x + (newPos.X - startPoint.X));
-            Canvas.SetTop(rect, y + (newPos.Y - startPoint.Y));
+            if (drag)
+            {
+                newPos = Mouse.GetPosition(canvas);
+                double x = Canvas.GetLeft(rect);
+                double y = Canvas.GetTop(rect);
+
+                Canvas.SetLeft(rect, x + (newPos.X - startPoint.X));
+                Canvas.SetTop(rect, y + (newPos.Y - startPoint.Y));
+
+                startPoint = newPos;
+            }
         }
 
         private void Rectangle_MouseUp(object sender, MouseButtonEventArgs e)
         {
             rect = null;
+            drag = false;
         }
     }
 }
