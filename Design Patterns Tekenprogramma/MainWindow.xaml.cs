@@ -28,50 +28,80 @@ namespace Design_Patterns_Tekenprogramma
         private Boolean drawmode = false;
         private Point startPoint;
         private Point newPos;
-        private Rectangle rect;
         private bool drag = false;
+        private Shape shape;
+        private string mode;
 
-
-        private void AddRectangleButton_Click(object sender, RoutedEventArgs e)
+        private void RadioButtonChecked(object sender, RoutedEventArgs e)
         {
-            drawmode = true;
+
+            var radioButton = sender as RadioButton;
+            if (radioButton == null)
+                return;
+            mode = Convert.ToString(radioButton.Content.ToString());
+            String shapeName = Convert.ToString(radioButton.Content.ToString());
+            //MessageBox.Show(shapeName.ToString(CultureInfo.InvariantCulture));
         }
+
+        //private void AddRectangleButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    drawmode = true;
+        //}
 
         private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
 
             startPoint = e.GetPosition(canvas);
 
-            if (drawmode == true)
+            if (mode == "select")
             {
-                rect = new Rectangle
+
+                
+                
+            }
+
+            if (mode == "rect")
+            {
+                shape = new Rectangle()
                 {
+
                     Stroke = Brushes.LightBlue,
                     StrokeThickness = 2,
-                    IsManipulationEnabled = true,
+                    Fill = new SolidColorBrush(System.Windows.Media.Colors.AliceBlue)
 
 
                 };
-                rect.Fill = new SolidColorBrush(System.Windows.Media.Colors.AliceBlue);
-                rect.MouseDown += Rectangle_MouseDown;
-                rect.MouseMove += Rectangle_MouseMove;
-                rect.MouseUp += Rectangle_MouseUp;
-                Canvas.SetLeft(rect, startPoint.X);
-                Canvas.SetTop(rect, startPoint.Y);
-                canvas.Children.Add(rect);
+                shape.MouseDown += Rectangle_MouseDown;
+                shape.MouseMove += Rectangle_MouseMove;
+                shape.MouseUp += Rectangle_MouseUp;
+                Canvas.SetLeft(shape, startPoint.X);
+                Canvas.SetTop(shape, startPoint.Y);
+                canvas.Children.Add(shape);
             }
-            
-        }
+            if (mode == "ellipse")
+            {
+                shape = new Ellipse()
+                {
+                    Name = "ellipse",
+                    Stroke = Brushes.LightBlue,
+                    StrokeThickness = 2,
+                    Fill = new SolidColorBrush(System.Windows.Media.Colors.AliceBlue)
+                };
+                shape.MouseDown += Rectangle_MouseDown;
+                shape.MouseMove += Rectangle_MouseMove;
+                shape.MouseUp += Rectangle_MouseUp;
+                Canvas.SetLeft(shape, startPoint.X);
+                Canvas.SetTop(shape, startPoint.Y);
+                canvas.Children.Add(shape);
+            }
 
-        
+        }
 
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Released || rect == null || sender.GetType().Name == "Rectangle")
+            if (e.LeftButton == MouseButtonState.Released || shape == null || sender.GetType().Name == "Shape" || mode == "select")
                 return;
 
-            if (drawmode)
-            {
                 var pos = e.GetPosition(canvas);
 
                 var x = Math.Min(pos.X, startPoint.X);
@@ -80,23 +110,23 @@ namespace Design_Patterns_Tekenprogramma
                 var w = Math.Max(pos.X, startPoint.X) - x;
                 var h = Math.Max(pos.Y, startPoint.Y) - y;
 
-                rect.Width = w;
-                rect.Height = h;
+                shape.Width = w;
+                shape.Height = h;
 
-                Canvas.SetLeft(rect, x);
-                Canvas.SetTop(rect, y);
-            }
+                Canvas.SetLeft(shape, x);
+                Canvas.SetTop(shape, y);
+            
         }
 
         private void Canvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            rect = null;
+            shape = null;
             drawmode = false;
         }
 
         private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            rect = sender as Rectangle;
+            shape = sender as Shape;
             startPoint = e.GetPosition(canvas);
             drag = true;
             
@@ -105,17 +135,17 @@ namespace Design_Patterns_Tekenprogramma
         private void Rectangle_MouseMove(object sender, MouseEventArgs e)
         {
             
-            if (e.LeftButton == MouseButtonState.Released || rect == null)
+            if (e.LeftButton == MouseButtonState.Released || shape == null)
                 return;
 
             if (drag)
             {
                 newPos = Mouse.GetPosition(canvas);
-                double x = Canvas.GetLeft(rect);
-                double y = Canvas.GetTop(rect);
+                double x = Canvas.GetLeft(shape);
+                double y = Canvas.GetTop(shape);
 
-                Canvas.SetLeft(rect, x + (newPos.X - startPoint.X));
-                Canvas.SetTop(rect, y + (newPos.Y - startPoint.Y));
+                Canvas.SetLeft(shape, x + (newPos.X - startPoint.X));
+                Canvas.SetTop(shape, y + (newPos.Y - startPoint.Y));
 
                 startPoint = newPos;
             }
@@ -123,7 +153,7 @@ namespace Design_Patterns_Tekenprogramma
 
         private void Rectangle_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            rect = null;
+            shape = null;
             drag = false;
         }
     }

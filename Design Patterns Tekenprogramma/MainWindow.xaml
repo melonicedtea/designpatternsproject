@@ -17,8 +17,41 @@
         <StackPanel Grid.Row="0" Orientation="Horizontal"/>
 
 
-        <Canvas x:Name="canvas" MouseDown="Canvas_MouseDown" MouseMove="Canvas_MouseMove" MouseUp="Canvas_MouseUp" Background="Transparent" Margin="-24,-13,-15.4,-16" Grid.Row="1" ></Canvas>
-        <Button x:Name="addRectangleButton" Content="Add Rectngle" Click="AddRectangleButton_Click" Margin="26,14.8,668.6,343" Grid.Row="1"/>
+        <Canvas x:Name="canvas" MouseDown="Canvas_MouseDown" MouseMove="Canvas_MouseMove" MouseUp="Canvas_MouseUp" Background="Transparent" Margin="-24,-13,-15.4,-16" Grid.Row="1" >
+            <GroupBox x:Name="radioButtons">
+                <StackPanel>
+                    <RadioButton Name="status1"
+                  Height="16"
+                  Margin="10,45,0,0"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Top"
+                  Content="rect"
+                             Checked="RadioButtonChecked"/>
+                    <RadioButton Name="status2"
+                  Height="16"
+                  Margin="10,67,0,0"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Top"
+                  Content="ellipse" 
+                             Checked="RadioButtonChecked"/>
+                    <RadioButton Name="status3"
+                  Height="16"
+                  Margin="10,89,0,0"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Top"
+                  Content="select" 
+                             Checked="RadioButtonChecked"/>
+                    <RadioButton Name="status4"
+                  Height="16"
+                  Margin="10,111,0,0"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Top"
+                  Content="4" 
+                             Checked="RadioButtonChecked"/>
+                </StackPanel>
+            </GroupBox>
+        </Canvas>
+        <!--<Button x:Name="addRectangleButton" Content="Add Rectngle" Click="AddRectangleButton_Click" Margin="26,14.8,668.6,343" Grid.Row="1"/>-->
 
     </Grid>
 
