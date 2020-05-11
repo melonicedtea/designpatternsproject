@@ -30,7 +30,11 @@ namespace Design_Patterns_Tekenprogramma
         private Point newPos;
         private bool drag = false;
         private Shape shape;
+        private List<Shape> shapes = new List<Shape>();
+        private Shape box;
         private string mode;
+        private string level;
+        private string level1;
 
         private void RadioButtonChecked(object sender, RoutedEventArgs e)
         {
@@ -50,14 +54,20 @@ namespace Design_Patterns_Tekenprogramma
 
         private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            
+            level1 = sender.GetType().Name;
+           // Console.WriteLine(level1);
+
 
             startPoint = e.GetPosition(canvas);
 
-            if (mode == "select")
+            if (mode == "select" && level1 == "Canvas" && level == null)
             {
+                if (shapes != null)
+                    foreach (Shape shape in shapes)
+                        shape.Stroke = Brushes.LightBlue;
 
-                
-                
+
             }
 
             if (mode == "rect")
@@ -71,12 +81,14 @@ namespace Design_Patterns_Tekenprogramma
 
 
                 };
+                shapes.Add(shape);
                 shape.MouseDown += Rectangle_MouseDown;
                 shape.MouseMove += Rectangle_MouseMove;
                 shape.MouseUp += Rectangle_MouseUp;
                 Canvas.SetLeft(shape, startPoint.X);
                 Canvas.SetTop(shape, startPoint.Y);
                 canvas.Children.Add(shape);
+                
             }
             if (mode == "ellipse")
             {
@@ -120,17 +132,24 @@ namespace Design_Patterns_Tekenprogramma
 
         private void Canvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
+           
             shape = null;
             drawmode = false;
+            level = null;
         }
 
         private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            level = sender.GetType().Name;
+            Console.WriteLine(level);
+
             shape = sender as Shape;
             startPoint = e.GetPosition(canvas);
             drag = true;
-            
-            
+
+            if (mode == "select" && level == "Rectangle")
+                shape.Stroke = Brushes.Red;
+
         }
         private void Rectangle_MouseMove(object sender, MouseEventArgs e)
         {
