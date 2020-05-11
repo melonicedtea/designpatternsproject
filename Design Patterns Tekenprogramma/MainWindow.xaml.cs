@@ -25,17 +25,14 @@ namespace Design_Patterns_Tekenprogramma
             InitializeComponent();
         }
 
-        private Boolean drawmode = false;
+        private bool drawMode = false;
         private Point startPoint;
         private Point newPos;
         private bool drag = false;
         private Shape shape;
         private List<Shape> shapes = new List<Shape>();
-        private Shape box;
         private string mode;
-        private string level;
-        private string level1;
-
+        private bool shapeClicked;
         private void RadioButtonChecked(object sender, RoutedEventArgs e)
         {
 
@@ -54,14 +51,10 @@ namespace Design_Patterns_Tekenprogramma
 
         private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            
-            level1 = sender.GetType().Name;
-           // Console.WriteLine(level1);
-
 
             startPoint = e.GetPosition(canvas);
 
-            if (mode == "select" && level1 == "Canvas" && level == null)
+            if (mode == "select" && shapeClicked == false)
             {
                 if (shapes != null)
                     foreach (Shape shape in shapes)
@@ -72,6 +65,7 @@ namespace Design_Patterns_Tekenprogramma
 
             if (mode == "rect")
             {
+                //create shape
                 shape = new Rectangle()
                 {
 
@@ -81,12 +75,16 @@ namespace Design_Patterns_Tekenprogramma
 
 
                 };
+                //add to list
                 shapes.Add(shape);
-                shape.MouseDown += Rectangle_MouseDown;
-                shape.MouseMove += Rectangle_MouseMove;
-                shape.MouseUp += Rectangle_MouseUp;
+                //add functions
+                shape.MouseDown += Shape_MouseDown;
+                shape.MouseMove += Shape_MouseMove;
+                shape.MouseUp += Shape_MouseUp;
+                //set pos
                 Canvas.SetLeft(shape, startPoint.X);
                 Canvas.SetTop(shape, startPoint.Y);
+                //add to canvas
                 canvas.Children.Add(shape);
                 
             }
@@ -99,9 +97,10 @@ namespace Design_Patterns_Tekenprogramma
                     StrokeThickness = 2,
                     Fill = new SolidColorBrush(System.Windows.Media.Colors.AliceBlue)
                 };
-                shape.MouseDown += Rectangle_MouseDown;
-                shape.MouseMove += Rectangle_MouseMove;
-                shape.MouseUp += Rectangle_MouseUp;
+                shapes.Add(shape);
+                shape.MouseDown += Shape_MouseDown;
+                shape.MouseMove += Shape_MouseMove;
+                shape.MouseUp += Shape_MouseUp;
                 Canvas.SetLeft(shape, startPoint.X);
                 Canvas.SetTop(shape, startPoint.Y);
                 canvas.Children.Add(shape);
@@ -134,24 +133,23 @@ namespace Design_Patterns_Tekenprogramma
         {
            
             shape = null;
-            drawmode = false;
-            level = null;
+            drawMode = false;
+
         }
 
-        private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
+        private void Shape_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            level = sender.GetType().Name;
-            Console.WriteLine(level);
+            shapeClicked = true;
 
             shape = sender as Shape;
             startPoint = e.GetPosition(canvas);
             drag = true;
 
-            if (mode == "select" && level == "Rectangle")
+            if (mode == "select")
                 shape.Stroke = Brushes.Red;
 
         }
-        private void Rectangle_MouseMove(object sender, MouseEventArgs e)
+        private void Shape_MouseMove(object sender, MouseEventArgs e)
         {
             
             if (e.LeftButton == MouseButtonState.Released || shape == null)
@@ -170,10 +168,11 @@ namespace Design_Patterns_Tekenprogramma
             }
         }
 
-        private void Rectangle_MouseUp(object sender, MouseButtonEventArgs e)
+        private void Shape_MouseUp(object sender, MouseButtonEventArgs e)
         {
             shape = null;
             drag = false;
+            shapeClicked = false;
         }
     }
 }
