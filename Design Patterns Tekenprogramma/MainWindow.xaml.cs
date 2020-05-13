@@ -23,7 +23,11 @@ namespace Design_Patterns_Tekenprogramma
         public MainWindow()
         {
             InitializeComponent();
+
+            
         }
+        
+        
 
         private bool drawMode = false;
         private Point startPoint;
@@ -32,7 +36,18 @@ namespace Design_Patterns_Tekenprogramma
         private Shape shape;
         private List<Shape> shapes = new List<Shape>();
         private string mode;
-        private bool shapeClicked;
+        public bool shapeClicked = false;
+        public int scc;
+
+        public Shape GetShape()
+        {
+            return shape;
+        }
+
+        public Point GetStartPoint()
+        {
+            return startPoint;
+        }
         private void RadioButtonChecked(object sender, RoutedEventArgs e)
         {
 
@@ -40,8 +55,6 @@ namespace Design_Patterns_Tekenprogramma
             if (radioButton == null)
                 return;
             mode = Convert.ToString(radioButton.Content.ToString());
-            String shapeName = Convert.ToString(radioButton.Content.ToString());
-            //MessageBox.Show(shapeName.ToString(CultureInfo.InvariantCulture));
         }
 
         //private void AddRectangleButton_Click(object sender, RoutedEventArgs e)
@@ -49,9 +62,10 @@ namespace Design_Patterns_Tekenprogramma
         //    drawmode = true;
         //}
 
-        private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
+        public void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-
+            scc++;
+            Console.WriteLine(scc);
             startPoint = e.GetPosition(canvas);
 
             if (mode == "select" && shapeClicked == false)
@@ -59,7 +73,6 @@ namespace Design_Patterns_Tekenprogramma
                 if (shapes != null)
                     foreach (Shape shape in shapes)
                         shape.Stroke = Brushes.LightBlue;
-
 
             }
 
@@ -81,6 +94,7 @@ namespace Design_Patterns_Tekenprogramma
                 shape.MouseDown += Shape_MouseDown;
                 shape.MouseMove += Shape_MouseMove;
                 shape.MouseUp += Shape_MouseUp;
+                shape.MouseWheel += Shape_MouseWheel;
                 //set pos
                 Canvas.SetLeft(shape, startPoint.X);
                 Canvas.SetTop(shape, startPoint.Y);
@@ -101,6 +115,7 @@ namespace Design_Patterns_Tekenprogramma
                 shape.MouseDown += Shape_MouseDown;
                 shape.MouseMove += Shape_MouseMove;
                 shape.MouseUp += Shape_MouseUp;
+                shape.MouseWheel += Shape_MouseWheel;
                 Canvas.SetLeft(shape, startPoint.X);
                 Canvas.SetTop(shape, startPoint.Y);
                 canvas.Children.Add(shape);
@@ -141,7 +156,7 @@ namespace Design_Patterns_Tekenprogramma
         {
             shapeClicked = true;
 
-            shape = sender as Shape;
+            shape = sender as System.Windows.Shapes.Shape;
             startPoint = e.GetPosition(canvas);
             drag = true;
 
@@ -157,14 +172,22 @@ namespace Design_Patterns_Tekenprogramma
 
             if (drag)
             {
-                newPos = Mouse.GetPosition(canvas);
-                double x = Canvas.GetLeft(shape);
-                double y = Canvas.GetTop(shape);
+                //newPos = Mouse.GetPosition(canvas);
+                //double x = Canvas.GetLeft(shape);
+                //double y = Canvas.GetTop(shape);
 
-                Canvas.SetLeft(shape, x + (newPos.X - startPoint.X));
-                Canvas.SetTop(shape, y + (newPos.Y - startPoint.Y));
+                //Canvas.SetLeft(shape, x + (newPos.X - startPoint.X));
+                //Canvas.SetTop(shape, y + (newPos.Y - startPoint.Y));
 
-                startPoint = newPos;
+                //startPoint = newPos;
+
+
+                MyShape myShape = new MyShape();//contains actions
+                MoveShape moveShapeTask = new MoveShape(myShape);// contains actions -> execute
+                Receiver receiver = new Receiver();
+                receiver.addTask(moveShapeTask);// add
+                receiver.doTasks(); // do
+
             }
         }
 
@@ -173,6 +196,16 @@ namespace Design_Patterns_Tekenprogramma
             shape = null;
             drag = false;
             shapeClicked = false;
+        }
+
+        private void Shape_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (mode == "select")
+            {
+                shape = sender as System.Windows.Shapes.Shape;
+            shape.Width = shape.Width * (1 + e.Delta * 0.001);
+            shape.Height = shape.Height * (1 + e.Delta * 0.001);
+            }
         }
     }
 }
