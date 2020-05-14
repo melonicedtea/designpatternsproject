@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    class Receiver
+    class Invoker
     {
         private List<Task> taskList = new List<Task>();
 
