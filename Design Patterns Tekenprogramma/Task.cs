@@ -8,6 +8,8 @@ namespace Design_Patterns_Tekenprogramma
 {
     interface Task
     {
-        void execute();
+        void Execute();
+        void Undo();
+        void Redo();
     }
 }

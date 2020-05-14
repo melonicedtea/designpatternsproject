@@ -7,28 +7,28 @@ using System.Windows.Shapes;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    class MoveShape : Task
+    class DrawShape : Task
     {
         private MyShape shape;
 
-        public MoveShape(MyShape shape)
+        public DrawShape(MyShape shape)
         {
             this.shape = shape;
         }
 
         public void Execute()
         {
-            shape.Move();
-        }
-
-        public void Undo()
-        {
-            shape.UndoMove();
+            shape.draw();
         }
 
         public void Redo()
         {
-            shape.RedoMove();
+            throw new NotImplementedException();
+        }
+
+        public void Undo()
+        {
+            throw new NotImplementedException();
         }
     }
 }

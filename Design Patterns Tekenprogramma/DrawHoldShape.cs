@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,28 +8,28 @@ using System.Windows.Shapes;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    class MoveShape : Task
+    class DrawHoldShape : Task
     {
         private MyShape shape;
 
-        public MoveShape(MyShape shape)
+        public DrawHoldShape(MyShape shape)
         {
             this.shape = shape;
         }
 
         public void Execute()
         {
-            shape.Move();
-        }
-
-        public void Undo()
-        {
-            shape.UndoMove();
+            shape.drawHold();
         }
 
         public void Redo()
         {
-            shape.RedoMove();
+            throw new NotImplementedException();
+        }
+
+        public void Undo()
+        {
+            throw new NotImplementedException();
         }
     }
 }

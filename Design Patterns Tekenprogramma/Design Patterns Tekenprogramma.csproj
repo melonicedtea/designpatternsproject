@@ -55,9 +55,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DrawHoldShape.cs" />
+    <Compile Include="DrawShape.cs" />
     <Compile Include="MoveShape.cs" />
     <Compile Include="MyShape.cs" />
-    <Compile Include="Receiver.cs" />
+    <Compile Include="Invoker.cs" />
     <Compile Include="Task.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -20,15 +20,19 @@ namespace Design_Patterns_Tekenprogramma
     /// </summary>
     public partial class MainWindow : Window
     {
+
         public MainWindow()
         {
             InitializeComponent();
-
+            KeyDown += new KeyEventHandler(Window_KeyDown);
             
         }
         
-        
+   
+        //////////////////////INPUT MANAGER////////////////////////////////
 
+
+        //TODO: more commenting
         private bool drawMode = false;
         private Point startPoint;
         private Point newPos;
@@ -36,18 +40,16 @@ namespace Design_Patterns_Tekenprogramma
         private Shape shape;
         private List<Shape> shapes = new List<Shape>();
         private string mode;
-        public bool shapeClicked = false;
-        public int scc;
+        private bool shapeClicked = false;
+        MyShape myShape = null;
 
-        public Shape GetShape()
-        {
-            return shape;
-        }
-
-        public Point GetStartPoint()
-        {
-            return startPoint;
-        }
+        /// <summary>
+        /// Handles radiobutton events
+        /// 
+        /// Use the radiobuttons to change mode
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RadioButtonChecked(object sender, RoutedEventArgs e)
         {
 
@@ -57,15 +59,17 @@ namespace Design_Patterns_Tekenprogramma
             mode = Convert.ToString(radioButton.Content.ToString());
         }
 
-        //private void AddRectangleButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    drawmode = true;
-        //}
-
+        /// <summary>
+        /// Handles mousedown events on canvas
+        /// 
+        /// Click on canvas to deselect
+        /// Click on canvas to start drawing
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            scc++;
-            Console.WriteLine(scc);
+
             startPoint = e.GetPosition(canvas);
 
             if (mode == "select" && shapeClicked == false)
@@ -76,94 +80,75 @@ namespace Design_Patterns_Tekenprogramma
 
             }
 
-            if (mode == "rect")
-            {
-                //create shape
-                shape = new Rectangle()
-                {
-
-                    Stroke = Brushes.LightBlue,
-                    StrokeThickness = 2,
-                    Fill = new SolidColorBrush(System.Windows.Media.Colors.AliceBlue)
-
-
-                };
-                //add to list
-                shapes.Add(shape);
-                //add functions
-                shape.MouseDown += Shape_MouseDown;
-                shape.MouseMove += Shape_MouseMove;
-                shape.MouseUp += Shape_MouseUp;
-                shape.MouseWheel += Shape_MouseWheel;
-                //set pos
-                Canvas.SetLeft(shape, startPoint.X);
-                Canvas.SetTop(shape, startPoint.Y);
-                //add to canvas
-                canvas.Children.Add(shape);
-                
-            }
-            if (mode == "ellipse")
-            {
-                shape = new Ellipse()
-                {
-                    Name = "ellipse",
-                    Stroke = Brushes.LightBlue,
-                    StrokeThickness = 2,
-                    Fill = new SolidColorBrush(System.Windows.Media.Colors.AliceBlue)
-                };
-                shapes.Add(shape);
-                shape.MouseDown += Shape_MouseDown;
-                shape.MouseMove += Shape_MouseMove;
-                shape.MouseUp += Shape_MouseUp;
-                shape.MouseWheel += Shape_MouseWheel;
-                Canvas.SetLeft(shape, startPoint.X);
-                Canvas.SetTop(shape, startPoint.Y);
-                canvas.Children.Add(shape);
-            }
+            myShape = new MyShape();//contains actions
+            DrawShape drawShapeTask = new DrawShape(myShape);// contains actions -> execute
+            Invoker invoker = new Invoker();
+            invoker.AddTask(drawShapeTask);// add
+            invoker.DoTasks(); // do
 
         }
-
+        /// <summary>
+        /// Handles mouse movement events on canvas
+        ///
+        /// Enable initial draw visualization
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Released || shape == null || sender.GetType().Name == "Shape" || mode == "select")
                 return;
 
-                var pos = e.GetPosition(canvas);
+            DrawHoldShape drawHoldShapeTask = new DrawHoldShape(myShape);// contains actions -> execute
+            Invoker receiver = new Invoker();
+            receiver.AddTask(drawHoldShapeTask);// add
+            receiver.DoTasks(); // do
 
-                var x = Math.Min(pos.X, startPoint.X);
-                var y = Math.Min(pos.Y, startPoint.Y);
-
-                var w = Math.Max(pos.X, startPoint.X) - x;
-                var h = Math.Max(pos.Y, startPoint.Y) - y;
-
-                shape.Width = w;
-                shape.Height = h;
-
-                Canvas.SetLeft(shape, x);
-                Canvas.SetTop(shape, y);
-            
         }
-
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Canvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
            
             shape = null;
             drawMode = false;
 
+            
         }
-
+        /// <summary>
+        /// Handles mousedown events
+        /// 
+        /// Click on shape to select it
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Shape_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            MyShape.SetIsCalled();
             shapeClicked = true;
 
             shape = sender as System.Windows.Shapes.Shape;
             startPoint = e.GetPosition(canvas);
-            drag = true;
+            
 
             if (mode == "select")
+            {
+                drag = true;
                 shape.Stroke = Brushes.Red;
+            }
+                
+
+            
 
         }
+        /// <summary>
+        /// Click and Drag to move
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Shape_MouseMove(object sender, MouseEventArgs e)
         {
             
@@ -172,40 +157,97 @@ namespace Design_Patterns_Tekenprogramma
 
             if (drag)
             {
-                //newPos = Mouse.GetPosition(canvas);
-                //double x = Canvas.GetLeft(shape);
-                //double y = Canvas.GetTop(shape);
-
-                //Canvas.SetLeft(shape, x + (newPos.X - startPoint.X));
-                //Canvas.SetTop(shape, y + (newPos.Y - startPoint.Y));
-
-                //startPoint = newPos;
 
 
                 MyShape myShape = new MyShape();//contains actions
                 MoveShape moveShapeTask = new MoveShape(myShape);// contains actions -> execute
-                Receiver receiver = new Receiver();
-                receiver.addTask(moveShapeTask);// add
-                receiver.doTasks(); // do
+                Invoker invoker = new Invoker();
+                invoker.AddTask(moveShapeTask);// add
+                invoker.DoTasks(); // do
 
             }
         }
 
         private void Shape_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            shape = null;
+            //shape = null;
             drag = false;
             shapeClicked = false;
         }
-
+        /// <summary>
+        /// Scroll to resize shape
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Shape_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (mode == "select")
             {
-                shape = sender as System.Windows.Shapes.Shape;
-            shape.Width = shape.Width * (1 + e.Delta * 0.001);
-            shape.Height = shape.Height * (1 + e.Delta * 0.001);
+                shape = sender as Shape;
+                shape.Width += shape.Width * (1 + e.Delta * 0.001);
+                shape.Height += shape.Height * (1 + e.Delta * 0.001);
             }
+
+            
+        }
+        /// <summary>
+        /// Undo: CTRL+Z
+        /// Redo : CTRL+Y
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Z )
+            {//TODO fix this
+                MyShape myShape = new MyShape();//contains actions
+                MoveShape moveShapeTask = new MoveShape(myShape);// contains actions -> execute
+                moveShapeTask.Undo();
+                e.Handled = true;
+            }
+
+            if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Y)
+            {//TODO fix this
+                MyShape myShape = new MyShape();//contains actions
+                MoveShape moveShapeTask = new MoveShape(myShape);// contains actions -> execute
+                moveShapeTask.Redo();
+                e.Handled = true;
+            }
+        }
+
+        ///////////////////////GETTERS, SETTERS//////////////////////////////
+        public void SetShape(Shape currentShape)
+        {
+            shape = currentShape;
+        }
+        public void AddMethods(Shape shape)
+        {
+            shape.MouseDown += Shape_MouseDown;
+            shape.MouseMove += Shape_MouseMove;
+            shape.MouseUp += Shape_MouseUp;
+            shape.MouseWheel += Shape_MouseWheel;
+        }
+        public void AddShape(Shape shape)
+        {
+            shapes.Add(shape);
+        }
+        public string GetMode()
+        {
+            return mode;
+        }
+        public Shape GetShape()
+        {
+            return shape;
+        }
+
+        public Point GetStartPoint()
+        {
+            return startPoint;
+        }
+
+        public bool GetDrag()
+        {
+            return drag;
         }
     }
 }

@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    class Receiver
+   
+    class Invoker
     {
         private List<Task> taskList = new List<Task>();
-
-        public void addTask(Task task)
+        public void AddTask(Task task)
         {
             taskList.Add(task);
         }
 
-        public void doTasks()
+        public void DoTasks()
         {
             foreach (Task task in taskList)
             {
-                task.execute();
+                task.Execute();
             }
             taskList.Clear();
         }
