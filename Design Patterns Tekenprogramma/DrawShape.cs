@@ -18,7 +18,7 @@ namespace Design_Patterns_Tekenprogramma
 
         public void Execute()
         {
-            shape.draw();
+            shape.Draw();
         }
 
         public void Redo()
@@ -28,7 +28,7 @@ namespace Design_Patterns_Tekenprogramma
 
         public void Undo()
         {
-            throw new NotImplementedException();
+            shape.UndoDraw();
         }
     }
 }

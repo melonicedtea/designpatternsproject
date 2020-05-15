@@ -24,11 +24,12 @@ namespace Design_Patterns_Tekenprogramma
         public MainWindow()
         {
             InitializeComponent();
-            KeyDown += new KeyEventHandler(Window_KeyDown);
-            
+            KeyDown += new KeyEventHandler(MainWindow_KeyDown);
+
+
         }
-        
-   
+
+
         //////////////////////INPUT MANAGER////////////////////////////////
 
 
@@ -78,6 +79,7 @@ namespace Design_Patterns_Tekenprogramma
                     foreach (Shape shape in shapes)
                         shape.Stroke = Brushes.LightBlue;
 
+
             }
 
             myShape = new MyShape();//contains actions
@@ -112,11 +114,10 @@ namespace Design_Patterns_Tekenprogramma
         /// <param name="e"></param>
         private void Canvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
-           
+
             shape = null;
             drawMode = false;
 
-            
         }
         /// <summary>
         /// Handles mousedown events
@@ -127,21 +128,20 @@ namespace Design_Patterns_Tekenprogramma
         /// <param name="e"></param>
         private void Shape_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            MyShape.SetIsCalled();
+            MyShape.SetStartPoint();
             shapeClicked = true;
 
-            shape = sender as System.Windows.Shapes.Shape;
+            shape = sender as Shape;
             startPoint = e.GetPosition(canvas);
-            
+
 
             if (mode == "select")
             {
+                shape.CaptureMouse();
                 drag = true;
                 shape.Stroke = Brushes.Red;
             }
-                
 
-            
 
         }
         /// <summary>
@@ -151,13 +151,12 @@ namespace Design_Patterns_Tekenprogramma
         /// <param name="e"></param>
         private void Shape_MouseMove(object sender, MouseEventArgs e)
         {
-            
+
             if (e.LeftButton == MouseButtonState.Released || shape == null)
                 return;
 
             if (drag)
             {
-
 
                 MyShape myShape = new MyShape();//contains actions
                 MoveShape moveShapeTask = new MoveShape(myShape);// contains actions -> execute
@@ -171,8 +170,20 @@ namespace Design_Patterns_Tekenprogramma
         private void Shape_MouseUp(object sender, MouseButtonEventArgs e)
         {
             //shape = null;
-            drag = false;
             shapeClicked = false;
+            if (drag)
+            {
+
+
+                MyShape myShape = new MyShape();//contains actions
+                MoveShape moveShapeTask = new MoveShape(myShape);// contains actions -> execute
+                Invoker invoker = new Invoker();
+                invoker.AddTask(moveShapeTask);// add
+                invoker.DoTasks(); // do
+                shape.ReleaseMouseCapture();
+            }
+            drag = false;
+            
         }
         /// <summary>
         /// Scroll to resize shape
@@ -188,7 +199,21 @@ namespace Design_Patterns_Tekenprogramma
                 shape.Height += shape.Height * (1 + e.Delta * 0.001);
             }
 
-            
+
+        }
+
+        private void Shape_MouseLeave(object sender, MouseEventArgs e)
+        {
+            shapeClicked = false;
+            if (drag)
+            {
+                MyShape myShape = new MyShape();//contains actions
+                MoveShape moveShapeTask = new MoveShape(myShape);// contains actions -> execute
+                Invoker invoker = new Invoker();
+                invoker.AddTask(moveShapeTask);// add
+                invoker.DoTasks(); // do
+            }
+            drag = false;
         }
         /// <summary>
         /// Undo: CTRL+Z
@@ -196,13 +221,19 @@ namespace Design_Patterns_Tekenprogramma
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Window_KeyDown(object sender, KeyEventArgs e)
+        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Z )
+            if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Z)
             {//TODO fix this
                 MyShape myShape = new MyShape();//contains actions
                 MoveShape moveShapeTask = new MoveShape(myShape);// contains actions -> execute
-                moveShapeTask.Undo();
+                DrawShape drawShapeTask = new DrawShape(myShape);
+                Invoker invoker = new Invoker();
+                //invoker.AddTask(drawShapeTask);
+                invoker.AddTask(moveShapeTask);
+
+                invoker.UndoTasks();
+
                 e.Handled = true;
             }
 
@@ -210,7 +241,9 @@ namespace Design_Patterns_Tekenprogramma
             {//TODO fix this
                 MyShape myShape = new MyShape();//contains actions
                 MoveShape moveShapeTask = new MoveShape(myShape);// contains actions -> execute
-                moveShapeTask.Redo();
+                Invoker invoker = new Invoker();
+                invoker.AddTask(moveShapeTask);
+                invoker.RedoTasks();
                 e.Handled = true;
             }
         }
@@ -226,7 +259,10 @@ namespace Design_Patterns_Tekenprogramma
             shape.MouseMove += Shape_MouseMove;
             shape.MouseUp += Shape_MouseUp;
             shape.MouseWheel += Shape_MouseWheel;
+            //shape.MouseLeave += Shape_MouseLeave;
         }
+
+
         public void AddShape(Shape shape)
         {
             shapes.Add(shape);
@@ -248,6 +284,11 @@ namespace Design_Patterns_Tekenprogramma
         public bool GetDrag()
         {
             return drag;
+        }
+
+        public bool GetShapeClicked()
+        {
+            return shapeClicked;
         }
     }
 }
