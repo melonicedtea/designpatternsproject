@@ -10,6 +10,5 @@ namespace Design_Patterns_Tekenprogramma
     {
         void Execute();
         void Undo();
-        void Redo();
     }
 }

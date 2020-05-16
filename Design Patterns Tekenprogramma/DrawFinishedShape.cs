@@ -7,28 +7,23 @@ using System.Windows.Shapes;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    class MoveShape : Task
+    class DrawFinishedShape : Task
     {
         private MyShape shape;
 
-        public MoveShape(MyShape shape)
+        public DrawFinishedShape(MyShape shape)
         {
             this.shape = shape;
         }
 
         public void Execute()
         {
-            shape.Move();
+            shape.drawFinished();
         }
 
         public void Undo()
         {
-            shape.UndoMove();
-        }
-
-        public void Redo()
-        {
-            shape.RedoMove();
+            shape.UndoDraw();
         }
     }
 }

@@ -23,40 +23,5 @@ namespace Design_Patterns_Tekenprogramma
             }
             taskList.Clear();
         }
-
-        public void UndoTasks()
-        {
-            foreach (Task task in taskList)
-            {
-                task.Undo();
-            }
-            taskList.Clear();
-        }
-
-        public void RedoTasks()
-        {
-            foreach (Task task in taskList)
-            {
-                task.Redo();
-            }
-            taskList.Clear();
-        }
-
-        //Task task;
-
-        //public Invoker(Task task)
-        //{
-        //    this.task = task;
-        //}
-
-        //public void DoTask()
-        //{
-        //    task.Execute();
-        //}
-
-        //public void UndoTask()
-        //{
-        //    task.Undo();
-        //}
     }
 }

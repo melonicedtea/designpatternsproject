@@ -22,11 +22,6 @@ namespace Design_Patterns_Tekenprogramma
             shape.drawHold();
         }
 
-        public void Redo()
-        {
-            throw new NotImplementedException();
-        }
-
         public void Undo()
         {
             throw new NotImplementedException();

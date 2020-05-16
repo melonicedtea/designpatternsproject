@@ -13,106 +13,59 @@ namespace Design_Patterns_Tekenprogramma
 {
     public class MyShape
     {
-        static Point startPoint;
-        static MainWindow myWin = (MainWindow)Application.Current.MainWindow;
-        static Shape currentShape;
+        Point startPoint;
+        MainWindow myWin = (MainWindow)Application.Current.MainWindow;
+        Shape currentShape;
         Point newPos;
+        double x;
+        double y;
+        double oldX;
+        double oldY;
 
-        static List<Shape> shapes = new List<Shape>();
-        static List<Point> points = new List<Point>();
-        static int counter = 0;
-        static int totalCount = 0;
-
-        static List<KeyValuePair<int, int>> kvps = new List<KeyValuePair<int, int>>();
-
-        public void Move()
+        public MyShape()
         {
 
-            while (shapes.Count > counter)
-            {
-                shapes.Remove(shapes.Last());
-            }
+        }
+        public MyShape(Shape shape)
+        {
+            currentShape = shape;
 
-            while (points.Count > counter)
-            {
-                points.Remove(points.Last());
-            }
+            oldX = Canvas.GetLeft(shape);
+            oldY = Canvas.GetTop(shape);
 
+
+        }
+
+        public void MoveHold()
+        {
             newPos = Mouse.GetPosition(myWin.canvas);
-            currentShape = myWin.GetShape();
 
-            double x = Canvas.GetLeft(currentShape);
-            double y = Canvas.GetTop(currentShape);
+            x = Canvas.GetLeft(currentShape);
+            y = Canvas.GetTop(currentShape);
 
             Canvas.SetLeft(currentShape, x + (newPos.X - startPoint.X));
             Canvas.SetTop(currentShape, y + (newPos.Y - startPoint.Y));
 
             startPoint = newPos;
+        }
 
-            if (myWin.GetShapeClicked() == false)
-            {
-                shapes.Add(currentShape);
-                Point point = new Point(x, y);
-                points.Add(point);
-
-                counter++;
-                totalCount++;
-            }
-            
-
-            Console.WriteLine("step: " + counter);
-
-            Console.WriteLine("shapescnt: " + shapes.Count);
-
-            Console.WriteLine("pointscnt: " + points.Count);
+        public void MoveFinished()
+        {
+            Canvas.SetLeft(currentShape, x);
+            Canvas.SetTop(currentShape, y);
         }
 
         public void UndoMove()
         {
-            int step = 1;
-            counter = counter - step;
-            if (counter < 0)
-            {
-                counter = 0;
-            }
-            if (counter > 0)
-            {
 
-                Shape shape = shapes[counter - 1];
-                Canvas.SetLeft(shape, points[counter - 1].X);
-                Canvas.SetTop(shape, points[counter - 1].Y);
-              
+            Canvas.SetLeft(currentShape, oldX);
+            Canvas.SetTop(currentShape, oldY);
 
-            }
-            Console.WriteLine("step: " + counter);
-
-            Console.WriteLine("shapescnt: " + shapes.Count);
-
-            Console.WriteLine("pointscnt: " + points.Count);
-        }
-
-        public void RedoMove()
-        {
-            if (counter < shapes.Count - 1)
-            {
-
-                int step = 10;
-                counter = counter + step;
-                if (counter > shapes.Count - 1)
-                {
-                    counter = shapes.Count - 1;
-                }
-                Shape shape = shapes[counter];
-                Canvas.SetLeft(shape, points[counter].X);
-                Canvas.SetTop(shape, points[counter].Y);
-
-                Console.WriteLine(counter);
-            }
         }
 
         public void Draw()
         {
-            
+
 
             startPoint = Mouse.GetPosition(myWin.canvas);
 
@@ -140,25 +93,6 @@ namespace Design_Patterns_Tekenprogramma
                 myWin.canvas.Children.Add(currentShape);
                 myWin.SetShape(currentShape);
 
-                //save pos and shape for undo
-                shapes.Add(currentShape);
-                Point point = new Point(startPoint.X, startPoint.Y);
-                points.Add(point);
-                counter++;
-                totalCount++;
-                Console.WriteLine(counter);
-                kvps.Add(new KeyValuePair<int, int>(currentShape.GetHashCode(), counter));
-
-                //log
-                foreach (KeyValuePair<int, int> kvp in kvps)
-                {
-                    Console.WriteLine("kvp: " + kvp.Key + " key: " + kvp.Value);
-                }
-                foreach (Shape s in shapes)
-                {
-                    Console.WriteLine(s.GetHashCode());
-                }
-
 
             }
             if (myWin.GetMode() == "ellipse")
@@ -184,8 +118,8 @@ namespace Design_Patterns_Tekenprogramma
         {
             var pos = Mouse.GetPosition(myWin.canvas);
 
-            var x = Math.Min(pos.X, startPoint.X);
-            var y = Math.Min(pos.Y, startPoint.Y);
+            x = Math.Min(pos.X, startPoint.X);
+            y = Math.Min(pos.Y, startPoint.Y);
 
             var w = Math.Max(pos.X, startPoint.X) - x;
             var h = Math.Max(pos.Y, startPoint.Y) - y;
@@ -197,26 +131,24 @@ namespace Design_Patterns_Tekenprogramma
             Canvas.SetTop(currentShape, y);
         }
 
+        public void drawFinished()
+        {
+                if (!myWin.canvas.Children.Contains(currentShape))
+                {
+                    myWin.canvas.Children.Add(currentShape);
+                }
+                        
+        }
+
         public void UndoDraw()
         {
-            //if (counter > 0)
-            //{
-            //    foreach (KeyValuePair<int, int> kvp in kvps)
-            //    {
-            //        if (kvp.Key == shapes[counter - 1].GetHashCode() && kvp.Value == counter)
-            //        {
-            //            myWin.canvas.Children.Remove(shapes[counter - 1]);
-            //            kvps.Remove(kvp);
-            //            shapes.Remove(shapes.Last());
-            //            points.Remove(points.Last());
-            //            break;
-            //        }
-            //    }
-            //}
-
+            if (myWin.canvas.Children.Contains(currentShape))
+            {
+                myWin.canvas.Children.Remove(currentShape);
+            }
 
         }
-        public static void SetStartPoint()
+        public void SetStartPoint()
         {
             startPoint = myWin.GetStartPoint();
         }

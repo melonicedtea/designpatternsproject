@@ -7,23 +7,24 @@ using System.Windows.Shapes;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    class DrawShape : Task
+    class MoveHoldShape : Task
     {
         private MyShape shape;
 
-        public DrawShape(MyShape shape)
+        public MoveHoldShape(MyShape shape)
         {
             this.shape = shape;
         }
 
         public void Execute()
         {
-            shape.Draw();
+            shape.MoveHold();
         }
 
         public void Undo()
         {
             throw new NotImplementedException();
         }
+
     }
 }
