@@ -53,7 +53,6 @@ namespace Design_Patterns_Tekenprogramma
         private List<Task> taskList = new List<Task>();
         private int counter = 0;
 
-        private List<string> shapesListStrings = new List<string>();
         /// <summary>
         /// Handles radiobutton events
         /// 
@@ -88,23 +87,7 @@ namespace Design_Patterns_Tekenprogramma
                 if (shapes != null)
                     foreach (Shape shape in shapes)
                         shape.Stroke = Brushes.LightBlue;
-
-
-                foreach (Shape shape in canvas.Children)
-                {
-                    string line =
-                        shape.Name + " " +
-                        Canvas.GetLeft(shape) + " " +
-                        Canvas.GetTop(shape) + " " +
-                        shape.Width + " " +
-                        shape.Height;
-                    Console.WriteLine(line);
-                    shapesListStrings.Add(line);
-
-                }
-                File.WriteAllLines("Mytxt.txt", shapesListStrings.ToArray());
-                shapesListStrings.Clear();
-
+                
                 foreach (Shape shape in canvas.Children)
                 {
                     string line = 

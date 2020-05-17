@@ -35,15 +35,15 @@ namespace Design_Patterns_Tekenprogramma
                             Stroke = Brushes.LightBlue,
                             StrokeThickness = 2,
                             Fill = new SolidColorBrush(System.Windows.Media.Colors.AliceBlue),
-                            Width = Convert.ToInt32(splittedText[3]),
-                            Height = Convert.ToInt32(splittedText[4]),
+                            Width = Convert.ToDouble(splittedText[3]),
+                            Height = Convert.ToDouble(splittedText[4]),
 
 
                         };
                         myWin.AddShape(currentShape);
                         myWin.AddMethods(currentShape);
-                        Canvas.SetLeft(currentShape, Convert.ToInt32(splittedText[1]));
-                        Canvas.SetTop(currentShape, Convert.ToInt32(splittedText[2]));
+                        Canvas.SetLeft(currentShape, Convert.ToDouble(splittedText[1]));
+                        Canvas.SetTop(currentShape, Convert.ToDouble(splittedText[2]));
                         myWin.canvas.Children.Add(currentShape);
 
                     }
@@ -55,15 +55,15 @@ namespace Design_Patterns_Tekenprogramma
                             Stroke = Brushes.LightBlue,
                             StrokeThickness = 2,
                             Fill = new SolidColorBrush(System.Windows.Media.Colors.AliceBlue),
-                            Width = Convert.ToInt32(splittedText[3]),
-                            Height = Convert.ToInt32(splittedText[4]),
+                            Width = Convert.ToDouble(splittedText[3]),
+                            Height = Convert.ToDouble(splittedText[4]),
 
 
                         };
                         myWin.AddShape(currentShape);
                         myWin.AddMethods(currentShape);
-                        Canvas.SetLeft(currentShape, Convert.ToInt32(splittedText[1]));
-                        Canvas.SetTop(currentShape, Convert.ToInt32(splittedText[2]));
+                        Canvas.SetLeft(currentShape, Convert.ToDouble(splittedText[1]));
+                        Canvas.SetTop(currentShape, Convert.ToDouble(splittedText[2]));
                         myWin.canvas.Children.Add(currentShape);
 
                     }

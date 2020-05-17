@@ -33,6 +33,9 @@ namespace Design_Patterns_Tekenprogramma
             oldX = Canvas.GetLeft(shape);
             oldY = Canvas.GetTop(shape);
 
+            x = Canvas.GetLeft(currentShape);
+            y = Canvas.GetTop(currentShape);
+
 
         }
 
@@ -51,6 +54,7 @@ namespace Design_Patterns_Tekenprogramma
 
         public void MoveFinished()
         {
+
             Canvas.SetLeft(currentShape, x);
             Canvas.SetTop(currentShape, y);
         }
