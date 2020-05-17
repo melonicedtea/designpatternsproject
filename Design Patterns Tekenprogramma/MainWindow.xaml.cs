@@ -28,6 +28,10 @@ namespace Design_Patterns_Tekenprogramma
             KeyDown += new KeyEventHandler(MainWindow_KeyDown);//listen to keyboard key-presses 
             status3.IsChecked = true;//select-mode is checked by default
 
+            LoadFile fileLoader = new LoadFile();
+            fileLoader.loadFile();
+
+
         }
 
 
@@ -44,6 +48,7 @@ namespace Design_Patterns_Tekenprogramma
         private string mode = "select";
         private bool shapeClicked = false;
         MyShape myShape = null;
+        private List<string> shapesListStrings = new List<string>();
 
         private List<Task> taskList = new List<Task>();
         private int counter = 0;
@@ -87,6 +92,21 @@ namespace Design_Patterns_Tekenprogramma
 
                 foreach (Shape shape in canvas.Children)
                 {
+                    string line =
+                        shape.Name + " " +
+                        Canvas.GetLeft(shape) + " " +
+                        Canvas.GetTop(shape) + " " +
+                        shape.Width + " " +
+                        shape.Height;
+                    Console.WriteLine(line);
+                    shapesListStrings.Add(line);
+
+                }
+                File.WriteAllLines("Mytxt.txt", shapesListStrings.ToArray());
+                shapesListStrings.Clear();
+
+                foreach (Shape shape in canvas.Children)
+                {
                     string line = 
                         shape.Name + " " +
                         Canvas.GetLeft(shape) + " " +
@@ -103,7 +123,7 @@ namespace Design_Patterns_Tekenprogramma
 
             if (mode == "rect" || mode == "ellipse")
             {
-                
+
                 draw = true;
 
                 myShape = new MyShape();//contains actions

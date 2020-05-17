@@ -55,6 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="LoadFile.cs" />
     <Compile Include="DrawFinishedShape.cs" />
     <Compile Include="DrawHoldShape.cs" />
     <Compile Include="DrawShape.cs" />
