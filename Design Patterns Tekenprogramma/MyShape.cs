@@ -75,7 +75,7 @@ namespace Design_Patterns_Tekenprogramma
                 //create shape
                 currentShape = new Rectangle()
                 {
-
+                    Name = "rectangle",
                     Stroke = Brushes.LightBlue,
                     StrokeThickness = 2,
                     Fill = new SolidColorBrush(System.Windows.Media.Colors.AliceBlue)
@@ -131,7 +131,7 @@ namespace Design_Patterns_Tekenprogramma
             Canvas.SetTop(currentShape, y);
         }
 
-        public void drawFinished()
+        public void DrawFinished()
         {
                 if (!myWin.canvas.Children.Contains(currentShape))
                 {
@@ -148,6 +148,31 @@ namespace Design_Patterns_Tekenprogramma
             }
 
         }
+
+        public void Enlarge()
+        {
+            currentShape.Width *= 1.01;
+            currentShape.Height *= 1.01;
+        }
+
+        public void UndoEnlarge()
+        {
+            currentShape.Width *= 0.99;
+            currentShape.Height *= 0.99;
+        }
+
+        public void Shrink()
+        {
+            currentShape.Width *= 0.99;
+            currentShape.Height *= 0.99;
+        }
+        
+        public void UndoShrink()
+        {
+            currentShape.Width *= 1.01;
+            currentShape.Height *= 1.01;
+        }
+
         public void SetStartPoint()
         {
             startPoint = myWin.GetStartPoint();

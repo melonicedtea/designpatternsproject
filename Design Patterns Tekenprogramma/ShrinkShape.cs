@@ -3,27 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Shapes;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    class DrawFinishedShape : Task
+    class ShrinkShape : Task
     {
         private MyShape shape;
 
-        public DrawFinishedShape(MyShape shape)
+        public ShrinkShape(MyShape shape)
         {
             this.shape = shape;
         }
 
         public void Execute()
         {
-            shape.DrawFinished();
+            shape.Shrink();
         }
 
         public void Undo()
         {
-            shape.UndoDraw();
+            shape.UndoShrink();
         }
     }
 }
+
