@@ -62,6 +62,8 @@
     <Compile Include="MoveHoldShape.cs" />
     <Compile Include="MyShape.cs" />
     <Compile Include="Invoker.cs" />
+    <Compile Include="EnlargeShape.cs" />
+    <Compile Include="ShrinkShape.cs" />
     <Compile Include="Task.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

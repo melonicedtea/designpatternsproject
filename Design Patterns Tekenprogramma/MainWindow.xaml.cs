@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -47,7 +48,7 @@ namespace Design_Patterns_Tekenprogramma
         private List<Task> taskList = new List<Task>();
         private int counter = 0;
 
-
+        private List<string> shapesListStrings = new List<string>();
         /// <summary>
         /// Handles radiobutton events
         /// 
@@ -83,7 +84,21 @@ namespace Design_Patterns_Tekenprogramma
                     foreach (Shape shape in shapes)
                         shape.Stroke = Brushes.LightBlue;
 
-                Console.WriteLine(sender);
+
+                foreach (Shape shape in canvas.Children)
+                {
+                    string line = 
+                        shape.Name + " " +
+                        Canvas.GetLeft(shape) + " " +
+                        Canvas.GetTop(shape) + " " +
+                        shape.Width + " " +
+                        shape.Height;
+                    Console.WriteLine(line);
+                    shapesListStrings.Add(line);
+                    
+                }
+                File.WriteAllLines("Mytxt.txt", shapesListStrings.ToArray());
+                shapesListStrings.Clear();
             }
 
             if (mode == "rect" || mode == "ellipse")
@@ -114,8 +129,9 @@ namespace Design_Patterns_Tekenprogramma
         /// <param name="e"></param>
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
         {
-            //if (e.LeftButton == MouseButtonState.Released || shape == null || sender.GetType().Name == "Shape" || mode == "select")
-            //    return;
+            if (e.LeftButton == MouseButtonState.Released || shape == null || sender.GetType().Name == "Shape" || mode == "select")
+                return;
+
             if (draw)
             {
                 shape.CaptureMouse();
@@ -137,7 +153,7 @@ namespace Design_Patterns_Tekenprogramma
         {
             if (draw)
             {
-                shape.ReleaseMouseCapture();
+                
 
                 DrawFinishedShape drawFinishedShapeTask = new DrawFinishedShape(myShape);// contains actions -> execute 
                 Invoker receiver = new Invoker();
@@ -160,7 +176,7 @@ namespace Design_Patterns_Tekenprogramma
                 {
                     Console.WriteLine(t);
                 }
-
+                shape.ReleaseMouseCapture();
             }
             shape = null;
             draw = false;
@@ -264,11 +280,56 @@ namespace Design_Patterns_Tekenprogramma
         /// <param name="e"></param>
         private void Shape_MouseWheel(object sender, MouseWheelEventArgs e)
         {
+            shape = sender as Shape;
             if (mode == "select")
             {
-                shape = sender as Shape;
-                shape.Width += shape.Width * (1 + e.Delta * 0.001);
-                shape.Height += shape.Height * (1 + e.Delta * 0.001);
+                myShape = new MyShape(shape);
+                if (e.Delta > 0)
+                {
+                    EnlargeShape enlargeShapeTask = new EnlargeShape(myShape);// contains actions -> execute
+                    Invoker invoker = new Invoker();
+                    invoker.AddTask(enlargeShapeTask);// add
+                    invoker.DoTasks(); // do
+
+                    while (taskList.Count > counter)
+                    {
+                        taskList.RemoveAt(counter);
+                    }
+
+                    counter++;
+                    taskList.Add(enlargeShapeTask);
+                    Console.WriteLine("counter: " + counter);
+                    Console.WriteLine("taskList counter: " + taskList.Count);
+
+                    foreach (Task t in taskList)
+                    {
+                        Console.WriteLine(t);
+                    }
+                }
+                if (e.Delta < 0)
+                {
+                    ShrinkShape shrinkShapeTask = new ShrinkShape(myShape);// contains actions -> execute
+                    Invoker invoker = new Invoker();
+                    invoker.AddTask(shrinkShapeTask);// add
+                    invoker.DoTasks(); // do
+
+                    while (taskList.Count > counter)
+                    {
+                        taskList.RemoveAt(counter);
+                    }
+
+                    counter++;
+                    taskList.Add(shrinkShapeTask);
+                    Console.WriteLine("counter: " + counter);
+                    Console.WriteLine("taskList counter: " + taskList.Count);
+
+
+
+                    foreach (Task t in taskList)
+                    {
+                        Console.WriteLine(t);
+                    }
+                }
             }
 
 
