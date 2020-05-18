@@ -55,6 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ShapeComponent.cs" />
     <Compile Include="LoadFile.cs" />
     <Compile Include="DrawFinishedShape.cs" />
     <Compile Include="DrawHoldShape.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="MyShape.cs" />
     <Compile Include="Invoker.cs" />
     <Compile Include="EnlargeShape.cs" />
+    <Compile Include="ShapeGroup.cs" />
     <Compile Include="ShrinkShape.cs" />
     <Compile Include="Task.cs" />
     <Page Include="MainWindow.xaml">

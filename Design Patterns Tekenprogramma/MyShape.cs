@@ -11,7 +11,7 @@ using System.Windows.Shapes;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    public class MyShape
+    public class MyShape : ShapeComponent
     {
         Point startPoint;
         MainWindow myWin = (MainWindow)Application.Current.MainWindow;
@@ -182,6 +182,10 @@ namespace Design_Patterns_Tekenprogramma
             startPoint = myWin.GetStartPoint();
         }
 
+        public override void DisplayShapeInfo()
+        {
+            Console.WriteLine(currentShape.Name);
+        }
 
     }
 }

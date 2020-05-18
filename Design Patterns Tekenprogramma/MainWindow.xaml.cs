@@ -407,6 +407,23 @@ namespace Design_Patterns_Tekenprogramma
                 }
                 e.Handled = true;
             }
+
+            if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.G)
+            {
+                ShapeComponent everyShape = new ShapeGroup("group 0");
+
+                foreach(Shape s in shapes)
+                {
+                    if (s.Stroke == Brushes.Red)
+                    {
+                        MyShape myShape = new MyShape(s);
+                        everyShape.Add(myShape);
+                    }
+                }
+
+                everyShape.DisplayShapeInfo();
+                
+            }
         }
 
         ///////////////////////GETTERS, SETTERS//////////////////////////////
