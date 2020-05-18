@@ -26,12 +26,31 @@ namespace Design_Patterns_Tekenprogramma
         {
             InitializeComponent();
             KeyDown += new KeyEventHandler(MainWindow_KeyDown);//listen to keyboard key-presses 
+            Closed += MainWindow_Closed;
             status3.IsChecked = true;//select-mode is checked by default
 
             LoadFile fileLoader = new LoadFile();
             fileLoader.loadFile();
 
 
+        }
+
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+            foreach (Shape shape in canvas.Children)
+            {
+                string line =
+                    shape.Name + " " +
+                    Canvas.GetLeft(shape) + " " +
+                    Canvas.GetTop(shape) + " " +
+                    shape.Width + " " +
+                    shape.Height;
+                Console.WriteLine(line);
+                shapesListStrings.Add(line);
+
+            }
+            File.WriteAllLines("Mytxt.txt", shapesListStrings.ToArray());
+            shapesListStrings.Clear();
         }
 
 
@@ -88,20 +107,7 @@ namespace Design_Patterns_Tekenprogramma
                     foreach (Shape shape in shapes)
                         shape.Stroke = Brushes.LightBlue;
                 
-                foreach (Shape shape in canvas.Children)
-                {
-                    string line = 
-                        shape.Name + " " +
-                        Canvas.GetLeft(shape) + " " +
-                        Canvas.GetTop(shape) + " " +
-                        shape.Width + " " +
-                        shape.Height;
-                    Console.WriteLine(line);
-                    shapesListStrings.Add(line);
-                    
-                }
-                File.WriteAllLines("Mytxt.txt", shapesListStrings.ToArray());
-                shapesListStrings.Clear();
+                
             }
 
             if (mode == "rect" || mode == "ellipse")
