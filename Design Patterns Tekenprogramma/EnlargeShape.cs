@@ -10,9 +10,9 @@ namespace Design_Patterns_Tekenprogramma
     {
         private MyShape shape;
 
-        public EnlargeShape(MyShape shape)
+        public EnlargeShape(ShapeComponent shape)
         {
-            this.shape = shape;
+            this.shape = shape as MyShape;
         }
 
         public void Execute()

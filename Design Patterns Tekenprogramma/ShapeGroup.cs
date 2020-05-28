@@ -28,9 +28,13 @@ namespace Design_Patterns_Tekenprogramma
             shapeComponents.Remove(shapeComponent);
         }
 
-        public ShapeComponent GetComponent(int componentIndex)
+        public override ShapeComponent GetComponent(int componentIndex)
         {
             return shapeComponents[componentIndex];
+        }
+        public override List<ShapeComponent> GetComponents()
+        {
+            return shapeComponents;
         }
 
         public override void DisplayShapeInfo()
@@ -40,6 +44,31 @@ namespace Design_Patterns_Tekenprogramma
             foreach(ShapeComponent sc in shapeComponents)
             {
                 sc.DisplayShapeInfo();
+            }
+        }
+
+        public override void Enlarge()
+        {
+
+            foreach (ShapeComponent sc in shapeComponents)
+            {
+                sc.Enlarge();
+            }
+        }
+
+        public override void MoveHold()
+        {
+            foreach (ShapeComponent sc in shapeComponents)
+            {
+                sc.MoveHold();
+            }
+        }
+
+        public override void SetGroupName()
+        {
+            foreach (ShapeComponent sc in shapeComponents)
+            {
+                sc.SetGroupName();
             }
         }
     }

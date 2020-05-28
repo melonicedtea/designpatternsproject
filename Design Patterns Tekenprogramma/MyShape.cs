@@ -21,6 +21,7 @@ namespace Design_Patterns_Tekenprogramma
         double y;
         double oldX;
         double oldY;
+        public bool inGroup = false;
 
         public MyShape()
         {
@@ -39,7 +40,7 @@ namespace Design_Patterns_Tekenprogramma
 
         }
 
-        public void MoveHold()
+        public override void MoveHold()
         {
             newPos = Mouse.GetPosition(myWin.canvas);
 
@@ -153,7 +154,7 @@ namespace Design_Patterns_Tekenprogramma
 
         }
 
-        public void Enlarge()
+        public override void Enlarge()
         {
             currentShape.Width *= 1.01;
             currentShape.Height *= 1.01;
@@ -177,15 +178,19 @@ namespace Design_Patterns_Tekenprogramma
             currentShape.Height *= 1.01;
         }
 
-        public void SetStartPoint()
+        public override void SetStartPoint()
         {
             startPoint = myWin.GetStartPoint();
         }
 
         public override void DisplayShapeInfo()
         {
-            Console.WriteLine(currentShape.Name);
+            Console.WriteLine(currentShape.Name + " inGroup: " + inGroup);
         }
 
+        public override void SetGroupName()
+        {
+            inGroup = true;
+        }
     }
 }

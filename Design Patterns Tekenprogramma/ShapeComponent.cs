@@ -10,8 +10,8 @@ namespace Design_Patterns_Tekenprogramma
     {
         public virtual void Add(ShapeComponent shapeComponent)
         {
-           
 
+            throw new NotSupportedException();
         }
 
         public void Remove(ShapeComponent shapeComponent)
@@ -19,10 +19,15 @@ namespace Design_Patterns_Tekenprogramma
             throw new NotSupportedException();
 
         }
-        public ShapeComponent GetComponent(int componentIndex)
+        public virtual ShapeComponent GetComponent(int componentIndex)
         {
             throw new NotSupportedException();
 
+        }
+
+        public virtual List<ShapeComponent> GetComponents()
+        {
+            throw new NotSupportedException();
         }
 
         public string GetShapeName()
@@ -33,7 +38,27 @@ namespace Design_Patterns_Tekenprogramma
 
         public virtual void DisplayShapeInfo()
         {
-            
+            throw new NotSupportedException();
+        }
+
+        public virtual void Enlarge()
+        {
+            throw new NotSupportedException();
+        }
+
+        public virtual void MoveHold()
+        {
+            throw new NotSupportedException();
+        }
+
+        public virtual void SetStartPoint()
+        {
+            throw new NotSupportedException();
+        }
+
+        public virtual void SetGroupName()
+        {
+            throw new NotSupportedException();
         }
     }
 }

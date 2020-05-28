@@ -11,9 +11,9 @@ namespace Design_Patterns_Tekenprogramma
     {
         private MyShape shape;
 
-        public DrawFinishedShape(MyShape shape)
+        public DrawFinishedShape(ShapeComponent shape)
         {
-            this.shape = shape;
+            this.shape = shape as MyShape;
         }
 
         public void Execute()

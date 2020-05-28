@@ -30,7 +30,7 @@ namespace Design_Patterns_Tekenprogramma
             status3.IsChecked = true;//select-mode is checked by default
 
             LoadFile fileLoader = new LoadFile();
-            fileLoader.loadFile();
+            //fileLoader.loadFile();
 
 
         }
@@ -66,11 +66,14 @@ namespace Design_Patterns_Tekenprogramma
         private List<Shape> shapes = new List<Shape>();
         private string mode = "select";
         private bool shapeClicked = false;
-        MyShape myShape = null;
+        private MyShape myShape = null;
         private List<string> shapesListStrings = new List<string>();
 
         private List<Task> taskList = new List<Task>();
         private int counter = 0;
+
+        private List<ShapeGroup> shapeGroups = new List<ShapeGroup>();
+        private ShapeGroup everyShape = new ShapeGroup("group 0");
 
         /// <summary>
         /// Handles radiobutton events
@@ -220,7 +223,6 @@ namespace Design_Patterns_Tekenprogramma
                 shape.Stroke = Brushes.Red;
             }
 
-
         }
         /// <summary>
         /// Click and Drag to move
@@ -235,11 +237,19 @@ namespace Design_Patterns_Tekenprogramma
 
             if (drag)
             {
-                
-                MoveHoldShape moveHoldShapeTask = new MoveHoldShape(myShape);// contains actions -> execute
-                Invoker invoker = new Invoker();
-                invoker.AddTask(moveHoldShapeTask);// add
-                invoker.DoTasks(); // do
+                List<ShapeComponent> shapeComponents = everyShape.GetComponents();
+                foreach (ShapeComponent shapeComponent in shapeComponents)
+                {
+                    MoveHoldShape moveHoldShapeTask = new MoveHoldShape(shapeComponent);// contains actions -> execute
+                    Invoker invoker = new Invoker();
+                    invoker.AddTask(moveHoldShapeTask);// add
+                    invoker.DoTasks(); // do
+                }
+
+                //MoveHoldShape moveHoldShapeTask = new MoveHoldShape(myShape);// contains actions -> execute
+                //Invoker invoker = new Invoker();
+                //invoker.AddTask(moveHoldShapeTask);// add
+                //invoker.DoTasks(); // do
 
             }
         }
@@ -378,7 +388,6 @@ namespace Design_Patterns_Tekenprogramma
                     {
                         Console.WriteLine(t);
                     }
-                    // taskList.Remove(lastTask);
                 }
                 e.Handled = true;
             }
@@ -410,7 +419,7 @@ namespace Design_Patterns_Tekenprogramma
 
             if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.G)
             {
-                ShapeComponent everyShape = new ShapeGroup("group 0");
+               
 
                 foreach(Shape s in shapes)
                 {
@@ -421,8 +430,9 @@ namespace Design_Patterns_Tekenprogramma
                     }
                 }
 
+                everyShape.SetGroupName();
                 everyShape.DisplayShapeInfo();
-                
+                everyShape.Enlarge();
             }
         }
 
