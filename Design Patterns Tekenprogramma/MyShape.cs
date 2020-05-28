@@ -56,8 +56,8 @@ namespace Design_Patterns_Tekenprogramma
         public void MoveFinished()
         {
 
-            Canvas.SetLeft(currentShape, x);
-            Canvas.SetTop(currentShape, y);
+           // Canvas.SetLeft(currentShape, x);
+           // Canvas.SetTop(currentShape, y);
         }
 
         public void UndoMove()

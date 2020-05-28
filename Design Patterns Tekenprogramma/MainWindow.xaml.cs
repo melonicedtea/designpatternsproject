@@ -74,6 +74,7 @@ namespace Design_Patterns_Tekenprogramma
 
         private List<ShapeGroup> shapeGroups = new List<ShapeGroup>();
         private ShapeGroup everyShape = new ShapeGroup("group 0");
+        List<ShapeComponent> shapeComponents = new List<ShapeComponent>();
 
         /// <summary>
         /// Handles radiobutton events
@@ -221,6 +222,13 @@ namespace Design_Patterns_Tekenprogramma
                 drag = true;
 
                 shape.Stroke = Brushes.Red;
+
+                shapeComponents = everyShape.GetComponents();
+                foreach (ShapeComponent shapeComponent in shapeComponents)
+                {
+                    shapeComponent.SetStartPoint();
+                }
+
             }
 
         }
@@ -237,7 +245,6 @@ namespace Design_Patterns_Tekenprogramma
 
             if (drag)
             {
-                List<ShapeComponent> shapeComponents = everyShape.GetComponents();
                 foreach (ShapeComponent shapeComponent in shapeComponents)
                 {
                     MoveHoldShape moveHoldShapeTask = new MoveHoldShape(shapeComponent);// contains actions -> execute
@@ -432,7 +439,7 @@ namespace Design_Patterns_Tekenprogramma
 
                 everyShape.SetGroupName();
                 everyShape.DisplayShapeInfo();
-                everyShape.Enlarge();
+                //everyShape.Enlarge();
             }
         }
 
