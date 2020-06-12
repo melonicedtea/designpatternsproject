@@ -8,6 +8,7 @@ namespace Design_Patterns_Tekenprogramma
 {
     public abstract class ShapeComponent
     {
+        public bool inGroup = false;
         public virtual void Add(ShapeComponent shapeComponent)
         {
 
@@ -51,12 +52,21 @@ namespace Design_Patterns_Tekenprogramma
             throw new NotSupportedException();
         }
 
+        public virtual void MoveFinished()
+        {
+            throw new NotSupportedException();
+        }
+        //public virtual void UndoMove()
+        //{
+        //    throw new NotSupportedException();
+        //}
+
         public virtual void SetStartPoint()
         {
             throw new NotSupportedException();
         }
 
-        public virtual void SetGroupName()
+        public virtual void SetGroupName(String groupName)
         {
             throw new NotSupportedException();
         }

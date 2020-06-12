@@ -21,7 +21,7 @@ namespace Design_Patterns_Tekenprogramma
         double y;
         double oldX;
         double oldY;
-        public bool inGroup = false;
+        String groupName;
 
         public MyShape()
         {
@@ -53,11 +53,11 @@ namespace Design_Patterns_Tekenprogramma
             startPoint = newPos;
         }
 
-        public void MoveFinished()
+        public override void MoveFinished()
         {
 
-           // Canvas.SetLeft(currentShape, x);
-           // Canvas.SetTop(currentShape, y);
+            Canvas.SetLeft(currentShape, x);
+            Canvas.SetTop(currentShape, y);
         }
 
         public void UndoMove()
@@ -185,12 +185,17 @@ namespace Design_Patterns_Tekenprogramma
 
         public override void DisplayShapeInfo()
         {
-            Console.WriteLine(currentShape.Name + " inGroup: " + inGroup);
+            Console.WriteLine(currentShape.Name + " inGroup: " + groupName);
         }
 
-        public override void SetGroupName()
+        public override void SetGroupName(String groupName)
         {
-            inGroup = true;
+            this.groupName = groupName;
+        }
+
+        public Shape GetShape()
+        {
+            return currentShape;
         }
     }
 }

@@ -15,13 +15,20 @@ namespace Design_Patterns_Tekenprogramma
         public ShapeGroup(String groupName)
         {
             this.groupName = groupName;
+
         }
 
         public string GetGroupName() { return groupName; }
 
         public override void Add(ShapeComponent shapeComponent)
         {
-            shapeComponents.Add(shapeComponent);
+            if (!shapeComponent.inGroup)
+            {
+                shapeComponent.inGroup = true;
+                shapeComponents.Add(shapeComponent);
+                SetGroupName();
+            }
+            
         }
         public void Remove(ShapeComponent shapeComponent)
         {
@@ -64,11 +71,33 @@ namespace Design_Patterns_Tekenprogramma
             }
         }
 
-        public override void SetGroupName()
+        public override void MoveFinished()
         {
             foreach (ShapeComponent sc in shapeComponents)
             {
-                sc.SetGroupName();
+                sc.MoveFinished();
+            }
+        }
+        public void UndoMove()
+        {
+            foreach (MyShape sc in shapeComponents)
+            {
+                sc.UndoMove();
+            }
+        }
+
+        public void SetGroupName()
+        {
+            foreach (ShapeComponent sc in shapeComponents)
+            {
+                sc.SetGroupName(groupName);
+            }
+        }
+        public override void SetStartPoint()
+        {
+            foreach (ShapeComponent sc in shapeComponents)
+            {
+                sc.SetStartPoint();
             }
         }
     }

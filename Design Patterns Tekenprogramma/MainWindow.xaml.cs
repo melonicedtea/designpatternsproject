@@ -62,8 +62,9 @@ namespace Design_Patterns_Tekenprogramma
         private Point startPoint;
         private Point newPos;
         private bool drag = false;
+        private bool dragGroup = false;
         private Shape shape;
-        private List<Shape> shapes = new List<Shape>();
+        private List<KeyVal<Shape, int>> shapes = new List<KeyVal<Shape, int>>();
         private string mode = "select";
         private bool shapeClicked = false;
         private MyShape myShape = null;
@@ -74,7 +75,9 @@ namespace Design_Patterns_Tekenprogramma
 
         private List<ShapeGroup> shapeGroups = new List<ShapeGroup>();
         private ShapeGroup everyShape = new ShapeGroup("group 0");
-        List<ShapeComponent> shapeComponents = new List<ShapeComponent>();
+        private int uniqueGroupNumber = 0;
+        private int groupNumber = 0;
+        //List<ShapeComponent> shapeComponents = new List<ShapeComponent>();
 
         /// <summary>
         /// Handles radiobutton events
@@ -108,9 +111,9 @@ namespace Design_Patterns_Tekenprogramma
             if (mode == "select" && shapeClicked == false)
             {
                 if (shapes != null)
-                    foreach (Shape shape in shapes)
-                        shape.Stroke = Brushes.LightBlue;
-                
+                    foreach (KeyVal<Shape, int> s in shapes)
+                        s.Id.Stroke = Brushes.LightBlue;
+
                 
             }
 
@@ -223,11 +226,34 @@ namespace Design_Patterns_Tekenprogramma
 
                 shape.Stroke = Brushes.Red;
 
-                shapeComponents = everyShape.GetComponents();
-                foreach (ShapeComponent shapeComponent in shapeComponents)
-                {
-                    shapeComponent.SetStartPoint();
+
+                //shapeComponents = everyShape.GetComponents();
+                //foreach (ShapeComponent shapeComponent in shapeComponents)
+                //{
+                //    shapeComponent.SetStartPoint();
+                //}
+                //everyShape.SetStartPoint();
+
+
+                if (shapeGroups.Count > 0)
+                {                  
+                    for(int i = 0; i < shapeGroups.Count; i++)
+                    {
+                        foreach (MyShape ms in shapeGroups[i].GetComponents())
+                        {
+                            if (ms.GetShape() == shape)
+                            {
+                                dragGroup = true;
+                                drag = false;
+                                groupNumber = i;
+                                
+                            }
+                        }
+                    }
+
+                    shapeGroups[groupNumber].SetStartPoint();
                 }
+                
 
             }
 
@@ -243,15 +269,14 @@ namespace Design_Patterns_Tekenprogramma
             if (e.LeftButton == MouseButtonState.Released || shape == null)
                 return;
 
-            if (drag)
+            if (dragGroup)
             {
-                foreach (ShapeComponent shapeComponent in shapeComponents)
-                {
-                    MoveHoldShape moveHoldShapeTask = new MoveHoldShape(shapeComponent);// contains actions -> execute
-                    Invoker invoker = new Invoker();
-                    invoker.AddTask(moveHoldShapeTask);// add
-                    invoker.DoTasks(); // do
-                }
+
+                //MoveHoldShape moveHoldShapeTask = new MoveHoldShape(everyShape);// contains actions -> execute
+                //Invoker invoker = new Invoker();
+                //invoker.AddTask(moveHoldShapeTask);// add
+                //invoker.DoTasks(); // do
+                shapeGroups[groupNumber].MoveHold();
 
                 //MoveHoldShape moveHoldShapeTask = new MoveHoldShape(myShape);// contains actions -> execute
                 //Invoker invoker = new Invoker();
@@ -259,11 +284,19 @@ namespace Design_Patterns_Tekenprogramma
                 //invoker.DoTasks(); // do
 
             }
+
+            if (drag)
+            {
+                MoveHoldShape moveHoldShapeTask = new MoveHoldShape(myShape);// contains actions -> execute
+                Invoker invoker = new Invoker();
+                invoker.AddTask(moveHoldShapeTask);// add
+                invoker.DoTasks(); // do
+            }
         }
 
         private void Shape_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            //shape = null;
+            
             shapeClicked = false;
             if (drag)
             {
@@ -285,7 +318,33 @@ namespace Design_Patterns_Tekenprogramma
                 Console.WriteLine("counter: " + counter);
                 Console.WriteLine("taskList counter: " + taskList.Count);
 
-                shape.ReleaseMouseCapture();
+                
+
+                foreach (Task t in taskList)
+                {
+                    Console.WriteLine(t);
+                }
+            }
+
+            if (dragGroup)
+            {
+                
+                    MoveFinishedShapeGroup moveFinishedShapeGroupTask = new MoveFinishedShapeGroup(everyShape);// contains actions -> execute
+                    Invoker invoker = new Invoker();
+                    invoker.AddTask(moveFinishedShapeGroupTask);// add
+                    invoker.DoTasks(); // do
+                
+                while (taskList.Count > counter)
+                {
+                    taskList.RemoveAt(counter);
+                }
+
+                counter++;
+                taskList.Add(moveFinishedShapeGroupTask);
+                Console.WriteLine("counter: " + counter);
+                Console.WriteLine("taskList counter: " + taskList.Count);
+
+
 
                 foreach (Task t in taskList)
                 {
@@ -293,9 +352,9 @@ namespace Design_Patterns_Tekenprogramma
                 }
             }
             drag = false;
+            dragGroup = false;
 
-
-
+            shape.ReleaseMouseCapture();
 
 
         }
@@ -426,20 +485,25 @@ namespace Design_Patterns_Tekenprogramma
 
             if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.G)
             {
-               
 
-                foreach(Shape s in shapes)
+                ShapeGroup group = new ShapeGroup("group " + uniqueGroupNumber.ToString());
+                shapeGroups.Add(group);
+                uniqueGroupNumber++;
+                foreach (KeyVal<Shape, int> s in shapes)
                 {
-                    if (s.Stroke == Brushes.Red)
+                    if (s.Id.Stroke == Brushes.Red)
                     {
-                        MyShape myShape = new MyShape(s);
-                        everyShape.Add(myShape);
+                        if(s.Text == 999) {
+                            s.Text = uniqueGroupNumber;
+                            MyShape myShape = new MyShape(s.Id);
+          
+                            group.Add(myShape);
+                            
+                        }
                     }
                 }
+                group.DisplayShapeInfo();
 
-                everyShape.SetGroupName();
-                everyShape.DisplayShapeInfo();
-                //everyShape.Enlarge();
             }
         }
 
@@ -459,7 +523,8 @@ namespace Design_Patterns_Tekenprogramma
 
         public void AddShape(Shape shape)
         {
-            shapes.Add(shape);
+            KeyVal<Shape, int> kv = new KeyVal<Shape, int>(shape, 999);
+            shapes.Add(kv);
         }
         public string GetMode()
         {

@@ -55,6 +55,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="KeyVal.cs" />
+    <Compile Include="MoveFinishedShapeGroup.cs" />
     <Compile Include="ShapeComponent.cs" />
     <Compile Include="LoadFile.cs" />
     <Compile Include="DrawFinishedShape.cs" />
