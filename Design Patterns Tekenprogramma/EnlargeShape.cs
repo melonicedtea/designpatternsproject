@@ -6,23 +6,25 @@ using System.Threading.Tasks;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    class EnlargeShape : Task
+    class EnlargeShape : ITask
     {
-        private MyShape shape;
+        private MyShape myShape;
 
-        public EnlargeShape(ShapeComponent shape)
+        public EnlargeShape(ShapeComponent shapeComponent)
         {
-            this.shape = shape as MyShape;
+            myShape = shapeComponent as MyShape;
         }
 
         public void Execute()
         {
-            shape.Enlarge();
+            //myShape.Enlarge();
+            EnlargeShapeVisitor enlargeShapeVisitor = new EnlargeShapeVisitor();
+            myShape.Accept(enlargeShapeVisitor);
         }
 
         public void Undo()
         {
-            shape.UndoEnlarge();
+            myShape.UndoEnlarge();
         }
     }
 }

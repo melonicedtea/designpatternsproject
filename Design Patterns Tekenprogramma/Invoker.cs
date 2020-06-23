@@ -9,15 +9,15 @@ namespace Design_Patterns_Tekenprogramma
    
     class Invoker
     {
-        private List<Task> taskList = new List<Task>();
-        public void AddTask(Task task)
+        private List<ITask> taskList = new List<ITask>();
+        public void AddTask(ITask task)
         {
             taskList.Add(task);
         }
 
         public void DoTasks()
         {
-            foreach (Task task in taskList)
+            foreach (ITask task in taskList)
             {
                 task.Execute();
             }

@@ -7,23 +7,27 @@ using System.Windows.Shapes;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    class MoveFinishedShape : Task
+    class MoveFinishedShape : ITask
     {
-        private MyShape shape;
+        private MyShape myShape;
 
-        public MoveFinishedShape(ShapeComponent shape)
+        public MoveFinishedShape(ShapeComponent shapeComponent)
         {
-            this.shape = shape as MyShape;
+            myShape = shapeComponent as MyShape;
         }
 
         public void Execute()
         {
-            shape.MoveFinished();
+            Console.WriteLine("myshape coords:");
+            Console.WriteLine(myShape.GetXY());
+            //myShape.MoveFinished();
+            MoveFinishedShapeVisitor sv = new MoveFinishedShapeVisitor();
+            myShape.Accept(sv);
         }
 
         public void Undo()
         {
-            shape.UndoMove();
+            myShape.UndoMove();
         }
 
     }

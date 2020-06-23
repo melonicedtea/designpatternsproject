@@ -11,18 +11,20 @@ using System.Windows.Shapes;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    public class MyShape : ShapeComponent
+    public class MyShape : ShapeComponent, IVisitable
     {
-        Point startPoint;
-        MainWindow myWin = (MainWindow)Application.Current.MainWindow;
-        Shape currentShape;
+        static MainWindow myWin = (MainWindow)Application.Current.MainWindow;
+        Point startPoint = Mouse.GetPosition(myWin.canvas);
         Point newPos;
+        Shape currentShape;
         double x;
         double y;
         double oldX;
         double oldY;
-        String groupName;
+        string groupName;
+        public List<TextBlock> ornaments = new List<TextBlock>();
 
+        public IDrawStrategy drawStrategy;
         public MyShape()
         {
 
@@ -37,7 +39,7 @@ namespace Design_Patterns_Tekenprogramma
             x = Canvas.GetLeft(currentShape);
             y = Canvas.GetTop(currentShape);
 
-
+            
         }
 
         public override void MoveHold()
@@ -51,6 +53,14 @@ namespace Design_Patterns_Tekenprogramma
             Canvas.SetTop(currentShape, y + (newPos.Y - startPoint.Y));
 
             startPoint = newPos;
+
+            Console.WriteLine("orn count: " + ornaments.Count);
+            foreach (TextBlock ornament in ornaments)
+            {
+                Console.WriteLine("Im HETE");
+                Canvas.SetLeft(ornament, x);
+                Canvas.SetTop(ornament, y);
+            }
         }
 
         public override void MoveFinished()
@@ -68,55 +78,31 @@ namespace Design_Patterns_Tekenprogramma
 
         }
 
+        public void SetDrawStrategy(IDrawStrategy newDrawStrategy)
+        {
+            drawStrategy = newDrawStrategy;
+        }
         public void Draw()
         {
+            Shape shapeToDraw = drawStrategy.GetDrawStrategy();
+            currentShape = shapeToDraw;
+            //currentShape = new Rectangle()
+            //{
+            //    Stroke = Brushes.LightBlue,
+            //    StrokeThickness = 2,
+            //    Fill = new SolidColorBrush(Colors.AliceBlue)
+            //};
 
 
-            startPoint = Mouse.GetPosition(myWin.canvas);
-
-            if (myWin.GetMode() == "rect")
-            {
-
-                //create shape
-                currentShape = new Rectangle()
-                {
-                    Name = "rectangle",
-                    Stroke = Brushes.LightBlue,
-                    StrokeThickness = 2,
-                    Fill = new SolidColorBrush(System.Windows.Media.Colors.AliceBlue)
-
-
-                };
-                //add to list
-                myWin.AddShape(currentShape);
-                //add functions
-                myWin.AddMethods(currentShape);
-                //set pos
-                Canvas.SetLeft(currentShape, startPoint.X);
-                Canvas.SetTop(currentShape, startPoint.Y);
-                //add to canvas
-                myWin.canvas.Children.Add(currentShape);
-                myWin.SetShape(currentShape);
-
-
-            }
-            if (myWin.GetMode() == "ellipse")
-            {
-                currentShape = new Ellipse()
-                {
-                    Name = "ellipse",
-                    Stroke = Brushes.LightBlue,
-                    StrokeThickness = 2,
-                    Fill = new SolidColorBrush(System.Windows.Media.Colors.AliceBlue)
-                };
-                myWin.AddShape(currentShape);
-                myWin.AddMethods(currentShape);
-                Canvas.SetLeft(currentShape, startPoint.X);
-                Canvas.SetTop(currentShape, startPoint.Y);
-                myWin.canvas.Children.Add(currentShape);
-                myWin.SetShape(currentShape);
-
-            }
+            myWin.AddShape(currentShape);
+            //add functions
+            myWin.AddMethods(currentShape);
+            //set pos
+            Canvas.SetLeft(currentShape, startPoint.X);
+            Canvas.SetTop(currentShape, startPoint.Y);
+            //add to canvas
+            myWin.canvas.Children.Add(currentShape);
+            myWin.SetShape(currentShape);
         }
 
         public void drawHold()
@@ -138,11 +124,12 @@ namespace Design_Patterns_Tekenprogramma
 
         public void DrawFinished()
         {
-                if (!myWin.canvas.Children.Contains(currentShape))
-                {
-                    myWin.canvas.Children.Add(currentShape);
-                }
-                        
+            if (!myWin.canvas.Children.Contains(currentShape))
+            {
+                myWin.canvas.Children.Add(currentShape);
+
+            }
+
         }
 
         public void UndoDraw()
@@ -154,11 +141,11 @@ namespace Design_Patterns_Tekenprogramma
 
         }
 
-        public override void Enlarge()
-        {
-            currentShape.Width *= 1.01;
-            currentShape.Height *= 1.01;
-        }
+        //public override void Enlarge()
+        //{
+        //    currentShape.Width *= 1.01;
+        //    currentShape.Height *= 1.01;
+        //}
 
         public void UndoEnlarge()
         {
@@ -166,11 +153,11 @@ namespace Design_Patterns_Tekenprogramma
             currentShape.Height *= 0.99;
         }
 
-        public void Shrink()
-        {
-            currentShape.Width *= 0.99;
-            currentShape.Height *= 0.99;
-        }
+        //public void Shrink()
+        //{
+        //    currentShape.Width *= 0.99;
+        //    currentShape.Height *= 0.99;
+        //}
         
         public void UndoShrink()
         {
@@ -182,20 +169,45 @@ namespace Design_Patterns_Tekenprogramma
         {
             startPoint = myWin.GetStartPoint();
         }
+        public Point GetStartPoint()
+        {
+            return startPoint;
+        }
 
         public override void DisplayShapeInfo()
         {
             Console.WriteLine(currentShape.Name + " inGroup: " + groupName);
         }
 
-        public override void SetGroupName(String groupName)
+        public override void SetGroupName(string groupName)
         {
             this.groupName = groupName;
+            
+        }
+        public void AddOrnament(TextBlock ornament)
+        {
+            ornaments.Add(ornament);
         }
 
-        public Shape GetShape()
+        public override Shape GetShape()
         {
             return currentShape;
+        }
+
+        public void Accept(IVisitor visitor)
+        {
+            Console.WriteLine("x: "+x+" y: "+y);
+            visitor.Visit(this);
+        }
+
+        public void SetXY(double x, double y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+        public Point GetXY()
+        {
+            return new Point(x, y);
         }
     }
 }

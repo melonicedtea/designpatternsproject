@@ -7,7 +7,7 @@ using System.Windows.Shapes;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    class MoveHoldShape : Task
+    class MoveHoldShape : ITask
     {
         private MyShape shape;
 
@@ -18,7 +18,8 @@ namespace Design_Patterns_Tekenprogramma
 
         public void Execute()
         {
-            shape.MoveHold();
+            MoveHoldShapeVisitor sv = new MoveHoldShapeVisitor();
+            shape.Accept(sv);
         }
 
         public void Undo()

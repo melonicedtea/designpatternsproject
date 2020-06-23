@@ -9,7 +9,7 @@
     <Grid Canvas.Left="-255" Canvas.Top="105" RenderTransformOrigin="0.447,0.497">
         <Canvas x:Name="canvas" MouseDown="Canvas_MouseDown" MouseMove="Canvas_MouseMove" MouseUp="Canvas_MouseUp" Background="Transparent" Margin="99,0,0.333,-0.333"/>
 
-        <GroupBox x:Name="radioButtons" Canvas.Top="10" Width="99" Background="AliceBlue" RenderTransformOrigin="0.483,0.501" Margin="0,0,694.333,0">
+        <GroupBox x:Name="radioButtons" Canvas.Top="10" Width="99" Background="AliceBlue" RenderTransformOrigin="0.483,0.501" Margin="0,0,694.333,115.667">
             <StackPanel>
                 <RadioButton Name="status1"
                   Height="16"
@@ -35,6 +35,7 @@
                 
             </StackPanel>
         </GroupBox>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="20" Margin="0,325,0,0" TextWrapping="Wrap" Text="teefr" VerticalAlignment="Top" Width="94"/>
 
     </Grid>
 

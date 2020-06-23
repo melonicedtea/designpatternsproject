@@ -6,23 +6,25 @@ using System.Threading.Tasks;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    class ShrinkShape : Task
+    class ShrinkShape : ITask
     {
-        private MyShape shape;
+        private MyShape myShape;
 
-        public ShrinkShape(ShapeComponent shape)
+        public ShrinkShape(ShapeComponent shapeComponent)
         {
-            this.shape = shape as MyShape;
+            myShape = shapeComponent as MyShape;
         }
 
         public void Execute()
         {
-            shape.Shrink();
+            //myShape.Shrink();
+            ShrinkShapeVisitor shrinkShapeVisitor = new ShrinkShapeVisitor();
+            myShape.Accept(shrinkShapeVisitor);
         }
 
         public void Undo()
         {
-            shape.UndoShrink();
+            myShape.UndoShrink();
         }
     }
 }

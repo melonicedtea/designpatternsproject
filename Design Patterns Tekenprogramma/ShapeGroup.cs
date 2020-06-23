@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    public class ShapeGroup : ShapeComponent
+    public class ShapeGroup : ShapeComponent, IVisitable
     {
         List<ShapeComponent> shapeComponents = new List<ShapeComponent>();
 
@@ -22,13 +22,7 @@ namespace Design_Patterns_Tekenprogramma
 
         public override void Add(ShapeComponent shapeComponent)
         {
-            if (!shapeComponent.inGroup)
-            {
-                shapeComponent.inGroup = true;
-                shapeComponents.Add(shapeComponent);
-                SetGroupName();
-            }
-            
+            shapeComponents.Add(shapeComponent);
         }
         public void Remove(ShapeComponent shapeComponent)
         {
@@ -86,7 +80,7 @@ namespace Design_Patterns_Tekenprogramma
             }
         }
 
-        public void SetGroupName()
+        public override void SetGroupName(string groupName)
         {
             foreach (ShapeComponent sc in shapeComponents)
             {
@@ -100,5 +94,11 @@ namespace Design_Patterns_Tekenprogramma
                 sc.SetStartPoint();
             }
         }
+
+        public void Accept(IVisitor visitor)
+        {
+            visitor.Visit(this);
+        }
+
     }
 }

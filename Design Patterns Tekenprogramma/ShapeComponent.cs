@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Shapes;
 
 namespace Design_Patterns_Tekenprogramma
 {
@@ -67,6 +68,10 @@ namespace Design_Patterns_Tekenprogramma
         }
 
         public virtual void SetGroupName(String groupName)
+        {
+            throw new NotSupportedException();
+        }
+        public virtual Shape GetShape()
         {
             throw new NotSupportedException();
         }
