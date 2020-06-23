@@ -7,7 +7,7 @@ using System.Windows.Shapes;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    class DrawFinishedShape : Task
+    class DrawFinishedShape : ITask
     {
         private MyShape shape;
 

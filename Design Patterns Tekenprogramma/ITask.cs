@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    interface Task
+    interface ITask
     {
         void Execute();
         void Undo();

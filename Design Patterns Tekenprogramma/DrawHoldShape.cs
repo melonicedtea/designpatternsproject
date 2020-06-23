@@ -8,7 +8,7 @@ using System.Windows.Shapes;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    class DrawHoldShape : Task
+    class DrawHoldShape : ITask
     {
         private MyShape shape;
 

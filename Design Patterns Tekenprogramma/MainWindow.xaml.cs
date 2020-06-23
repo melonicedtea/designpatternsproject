@@ -11,7 +11,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
+//using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Design_Patterns_Tekenprogramma
@@ -30,27 +30,31 @@ namespace Design_Patterns_Tekenprogramma
             status3.IsChecked = true;//select-mode is checked by default
 
             LoadFile fileLoader = new LoadFile();
-            //fileLoader.loadFile();
+            fileLoader.loadFile();
 
 
         }
 
+        List<string> shapesListStrings = new List<string>();
         private void MainWindow_Closed(object sender, EventArgs e)
         {
+            
             foreach (Shape shape in canvas.Children)
             {
                 string line =
                     shape.Name + " " +
-                    Canvas.GetLeft(shape) + " " +
-                    Canvas.GetTop(shape) + " " +
-                    shape.Width + " " +
-                    shape.Height;
+                   (int)Canvas.GetLeft(shape) + " " +
+                    (int)Canvas.GetTop(shape) + " " +
+                    (int)shape.Width + " " +
+                    (int)shape.Height;
                 Console.WriteLine(line);
                 shapesListStrings.Add(line);
 
             }
             File.WriteAllLines("Mytxt.txt", shapesListStrings.ToArray());
             shapesListStrings.Clear();
+            //SaveFileVisitor saveFileVisitor = new SaveFileVisitor();
+            //Accept(saveFileVisitor);
         }
 
 
@@ -64,20 +68,21 @@ namespace Design_Patterns_Tekenprogramma
         private bool drag = false;
         private bool dragGroup = false;
         private Shape shape;
-        private List<KeyVal<Shape, int>> shapes = new List<KeyVal<Shape, int>>();
+        public List<KeyVal<Shape, int>> shapes = new List<KeyVal<System.Windows.Shapes.Shape, int>>();
         private string mode = "select";
         private bool shapeClicked = false;
         private MyShape myShape = null;
-        private List<string> shapesListStrings = new List<string>();
+        private TextBlock textBlock = null;
+        
 
-        private List<Task> taskList = new List<Task>();
+        private List<ITask> taskList = new List<ITask>();
         private int counter = 0;
 
         private List<ShapeGroup> shapeGroups = new List<ShapeGroup>();
         private ShapeGroup everyShape = new ShapeGroup("group 0");
         private int uniqueGroupNumber = 0;
         private int groupNumber = 0;
-        //List<ShapeComponent> shapeComponents = new List<ShapeComponent>();
+        public List<List<object>> lists = new List<List<object>>();
 
         /// <summary>
         /// Handles radiobutton events
@@ -111,28 +116,59 @@ namespace Design_Patterns_Tekenprogramma
             if (mode == "select" && shapeClicked == false)
             {
                 if (shapes != null)
-                    foreach (KeyVal<Shape, int> s in shapes)
+                    foreach (KeyVal<System.Windows.Shapes.Shape, int> s in shapes)
                         s.Id.Stroke = Brushes.LightBlue;
 
                 
             }
 
+            //if (mode == "rect" || mode == "ellipse")
+            //{
+
+            //    draw = true;
+
+            //    myShape = new MyShape();//contains actions
+            //    DrawShape drawShapeTask = new DrawShape(myShape);// contains actions -> execute
+            //    Invoker invoker = new Invoker();
+            //    invoker.AddTask(drawShapeTask);// add
+            //    invoker.DoTasks(); // do
+
+
+            //}
             if (mode == "rect" || mode == "ellipse")
             {
-
                 draw = true;
-
                 myShape = new MyShape();//contains actions
-                DrawShape drawShapeTask = new DrawShape(myShape);// contains actions -> execute
-                Invoker invoker = new Invoker();
-                invoker.AddTask(drawShapeTask);// add
-                invoker.DoTasks(); // do
-
-
+                
+                
             }
+            if (mode == "rect")
+            {
+                DrawRectangleStrategy drawStrategy = DrawRectangleStrategy.GetInstance();
+                myShape.SetDrawStrategy(drawStrategy);
+                myShape.Draw();
 
-
-
+                //RedFillShapeDecorator redFillMyShape = new RedFillShapeDecorator(myShape);
+                //OrnamentShapeDecorator ornamentShapeDecorator = new OrnamentShapeDecorator(myShape, "top", "MFDSA");
+                //DrawShape drawShapeTask = new DrawShape(myShape);// contains actions -> execute
+                //Invoker invoker = new Invoker();
+                //invoker.AddTask(drawShapeTask);// add
+                //invoker.DoTasks(); // do
+            }
+            if (mode == "ellipse")
+            {
+                DrawEllipsesStrategy drawStrategy = DrawEllipsesStrategy.GetInstance();
+                myShape.SetDrawStrategy(drawStrategy);
+                myShape.Draw();
+                //draw = true;
+                //myShape.setDrawType(new ItDrawsEllipses());
+                //myShape.Draw();
+                //DrawShape drawShapeTask = new DrawShape(myShape);// contains actions -> execute
+                //Invoker invoker = new Invoker();
+                //invoker.AddTask(drawShapeTask);// add
+                //invoker.DoTasks(); // do
+            }
+            
 
 
         }
@@ -151,10 +187,11 @@ namespace Design_Patterns_Tekenprogramma
             if (draw)
             {
                 shape.CaptureMouse();
-                DrawHoldShape drawHoldShapeTask = new DrawHoldShape(myShape);// contains actions -> execute
-                Invoker receiver = new Invoker();
-                receiver.AddTask(drawHoldShapeTask);// add
-                receiver.DoTasks(); // do
+                //DrawHoldShape drawHoldShapeTask = new DrawHoldShape(myShape);// contains actions -> execute
+                //Invoker receiver = new Invoker();
+                //receiver.AddTask(drawHoldShapeTask);// add
+                //receiver.DoTasks(); // do
+                myShape.drawHold();
             }
 
 
@@ -188,7 +225,7 @@ namespace Design_Patterns_Tekenprogramma
                 taskList.Add(drawFinishedShapeTask);
                 Console.WriteLine("counter: " + counter);
                 Console.WriteLine("taskList counter: " + taskList.Count);
-                foreach (Task t in taskList)
+                foreach (ITask t in taskList)
                 {
                     Console.WriteLine(t);
                 }
@@ -198,6 +235,7 @@ namespace Design_Patterns_Tekenprogramma
             draw = false;
 
         }
+        MoveHoldShapeVisitor sv = new MoveHoldShapeVisitor();
         /// <summary>
         /// Handles mousedown events
         /// 
@@ -210,7 +248,7 @@ namespace Design_Patterns_Tekenprogramma
 
             shapeClicked = true;
 
-            shape = sender as Shape;
+            shape = sender as System.Windows.Shapes.Shape;
 
             myShape = new MyShape(shape);
 
@@ -220,7 +258,7 @@ namespace Design_Patterns_Tekenprogramma
 
                 startPoint = e.GetPosition(canvas);
 
-                myShape.SetStartPoint();
+                sv.SetStartPoint();
 
                 drag = true;
 
@@ -239,15 +277,22 @@ namespace Design_Patterns_Tekenprogramma
                 {                  
                     for(int i = 0; i < shapeGroups.Count; i++)
                     {
-                        foreach (MyShape ms in shapeGroups[i].GetComponents())
+                        foreach (ShapeComponent sc in shapeGroups[i].GetComponents())
                         {
-                            if (ms.GetShape() == shape)
+                            if (sc is MyShape)
                             {
-                                dragGroup = true;
-                                drag = false;
-                                groupNumber = i;
-                                
+                                MyShape ms = sc as MyShape;
+                                if (ms.GetShape() == shape)
+                                {
+                                    dragGroup = true;
+                                    drag = false;
+                                    if (i != 999)
+                                    {
+                                        groupNumber = i;
+                                    }
+                                }
                             }
+                            
                         }
                     }
 
@@ -256,7 +301,6 @@ namespace Design_Patterns_Tekenprogramma
                 
 
             }
-
         }
         /// <summary>
         /// Click and Drag to move
@@ -276,21 +320,26 @@ namespace Design_Patterns_Tekenprogramma
                 //Invoker invoker = new Invoker();
                 //invoker.AddTask(moveHoldShapeTask);// add
                 //invoker.DoTasks(); // do
-                shapeGroups[groupNumber].MoveHold();
+
+                //shapeGroups[groupNumber].MoveHold();
 
                 //MoveHoldShape moveHoldShapeTask = new MoveHoldShape(myShape);// contains actions -> execute
                 //Invoker invoker = new Invoker();
                 //invoker.AddTask(moveHoldShapeTask);// add
                 //invoker.DoTasks(); // do
 
+
+                shapeGroups[groupNumber].Accept(sv);
             }
 
             if (drag)
             {
-                MoveHoldShape moveHoldShapeTask = new MoveHoldShape(myShape);// contains actions -> execute
-                Invoker invoker = new Invoker();
-                invoker.AddTask(moveHoldShapeTask);// add
-                invoker.DoTasks(); // do
+                //MoveHoldShape moveHoldShapeTask = new MoveHoldShape(myShape);// contains actions -> execute
+                //Invoker invoker = new Invoker();
+                //invoker.AddTask(moveHoldShapeTask);// add
+                //invoker.DoTasks(); // do
+
+                myShape.Accept(sv);
             }
         }
 
@@ -320,16 +369,18 @@ namespace Design_Patterns_Tekenprogramma
 
                 
 
-                foreach (Task t in taskList)
+                foreach (ITask t in taskList)
                 {
                     Console.WriteLine(t);
                 }
+
+              
             }
 
             if (dragGroup)
             {
                 
-                    MoveFinishedShapeGroup moveFinishedShapeGroupTask = new MoveFinishedShapeGroup(everyShape);// contains actions -> execute
+                    MoveFinishedShapeGroup moveFinishedShapeGroupTask = new MoveFinishedShapeGroup(shapeGroups[groupNumber]);// contains actions -> execute
                     Invoker invoker = new Invoker();
                     invoker.AddTask(moveFinishedShapeGroupTask);// add
                     invoker.DoTasks(); // do
@@ -346,7 +397,7 @@ namespace Design_Patterns_Tekenprogramma
 
 
 
-                foreach (Task t in taskList)
+                foreach (ITask t in taskList)
                 {
                     Console.WriteLine(t);
                 }
@@ -365,7 +416,7 @@ namespace Design_Patterns_Tekenprogramma
         /// <param name="e"></param>
         private void Shape_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            shape = sender as Shape;
+            shape = sender as System.Windows.Shapes.Shape;
             if (mode == "select")
             {
                 myShape = new MyShape(shape);
@@ -386,7 +437,7 @@ namespace Design_Patterns_Tekenprogramma
                     Console.WriteLine("counter: " + counter);
                     Console.WriteLine("taskList counter: " + taskList.Count);
 
-                    foreach (Task t in taskList)
+                    foreach (ITask t in taskList)
                     {
                         Console.WriteLine(t);
                     }
@@ -410,7 +461,7 @@ namespace Design_Patterns_Tekenprogramma
 
 
 
-                    foreach (Task t in taskList)
+                    foreach (ITask t in taskList)
                     {
                         Console.WriteLine(t);
                     }
@@ -446,11 +497,11 @@ namespace Design_Patterns_Tekenprogramma
                     {
                         counter = 0;
                     }
-                    Task currentTask = taskList[counter];
+                    ITask currentTask = taskList[counter];
                     currentTask.Undo();
                     Console.WriteLine("counter: " + counter);
                     Console.WriteLine("taskList counter: " + taskList.Count);
-                    foreach (Task t in taskList)
+                    foreach (ITask t in taskList)
                     {
                         Console.WriteLine(t);
                     }
@@ -469,13 +520,13 @@ namespace Design_Patterns_Tekenprogramma
                 if (taskList.Count > counter)
                 {
 
-                    Task currentTask = taskList[counter];
+                    ITask currentTask = taskList[counter];
                     currentTask.Execute();
                     counter++;
                     Console.WriteLine("counter: " + counter);
                     Console.WriteLine("taskList counter: " + taskList.Count);
 
-                    foreach (Task t in taskList)
+                    foreach (ITask t in taskList)
                     {
                         Console.WriteLine(t);
                     }
@@ -485,34 +536,79 @@ namespace Design_Patterns_Tekenprogramma
 
             if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.G)
             {
-
-                ShapeGroup group = new ShapeGroup("group " + uniqueGroupNumber.ToString());
-                shapeGroups.Add(group);
-                uniqueGroupNumber++;
-                foreach (KeyVal<Shape, int> s in shapes)
+                ShapeGroup newGroup;
+                List<System.Windows.Shapes.Shape> tempShapes = new List<System.Windows.Shapes.Shape>();
+                int amountInGroup = 0;
+                bool allInGroup = shapes.Count == amountInGroup;
+                foreach (KeyVal<System.Windows.Shapes.Shape, int> s in shapes)
                 {
                     if (s.Id.Stroke == Brushes.Red)
                     {
-                        if(s.Text == 999) {
-                            s.Text = uniqueGroupNumber;
-                            MyShape myShape = new MyShape(s.Id);
-          
-                            group.Add(myShape);
-                            
+                        tempShapes.Add(s.Id);
+                        if (s.Text != 999)
+                        {
+                            amountInGroup++;
                         }
+
                     }
                 }
-                group.DisplayShapeInfo();
+                if (amountInGroup == 0)
+                {
+                    newGroup = new ShapeGroup("group" + uniqueGroupNumber);
+                    shapeGroups.Add(newGroup);
+                    foreach (KeyVal<System.Windows.Shapes.Shape, int> s in shapes)
+                    {
+                        if (s.Id.Stroke == Brushes.Red)
+                        {
+                            s.Text = uniqueGroupNumber;
+                            MyShape myShape = new MyShape(s.Id);
+                            myShape.SetGroupName(newGroup.GetGroupName());
+                            newGroup.Add(myShape);
+                        }
+                    }
+                    uniqueGroupNumber++;
+                    newGroup.DisplayShapeInfo();
+                }
+                else if (amountInGroup > 0)
+                {
+                    foreach (KeyVal<System.Windows.Shapes.Shape, int> s in shapes)
+                    {
+                        if (s.Id.Stroke == Brushes.Red)
+                        {
+                            if (s.Text == 999)
+                            {
+                                s.Text = groupNumber;
+                                MyShape myShape = new MyShape(s.Id);
+                                myShape.SetGroupName(shapeGroups[groupNumber].GetGroupName());
+                                shapeGroups[groupNumber].Add(myShape);
+                            }
+                            else if (s.Text != 999 && s.Text != groupNumber)
+                            {
+                                if (!shapeGroups[groupNumber].GetComponents().Contains(shapeGroups[s.Text]))
+                                {
+                                    shapeGroups[groupNumber].Add(shapeGroups[s.Text]);
+                                }
 
+                            }
+                        }
+                    }
+                    shapeGroups[groupNumber].DisplayShapeInfo();
+                    Console.WriteLine(shapeGroups[groupNumber].GetComponents().Count);
+                }
+
+            }
+            if (e.Key == Key.T)
+            {
+                OrnamentShapeDecorator ornament = new OrnamentShapeDecorator(myShape, "top", textBox.Text);
             }
         }
 
         ///////////////////////GETTERS, SETTERS//////////////////////////////
-        public void SetShape(Shape currentShape)
+        public void SetShape(System.Windows.Shapes.Shape currentShape)
         {
             shape = currentShape;
         }
-        public void AddMethods(Shape shape)
+        public void AddMethods(System.Windows.Shapes.Shape shape)
         {
             shape.MouseDown += Shape_MouseDown;
             shape.MouseMove += Shape_MouseMove;
@@ -520,11 +616,20 @@ namespace Design_Patterns_Tekenprogramma
             shape.MouseWheel += Shape_MouseWheel;
         }
 
-
-        public void AddShape(Shape shape)
+        public void AddShape(System.Windows.Shapes.Shape shape)
         {
-            KeyVal<Shape, int> kv = new KeyVal<Shape, int>(shape, 999);
+            KeyVal<System.Windows.Shapes.Shape, int> kv = new KeyVal<Shape, int>(shape, 999);
             shapes.Add(kv);
+        }
+        public void AddShape(System.Windows.Shapes.Shape shape, int gn)
+        {
+            KeyVal<System.Windows.Shapes.Shape, int> kv = new KeyVal<System.Windows.Shapes.Shape, int>(shape, gn);
+            shapes.Add(kv);
+        }
+
+        public void AddGroup(ShapeGroup shapeGroup)
+        {
+            shapeGroups.Add(shapeGroup);
         }
         public string GetMode()
         {
@@ -548,6 +653,16 @@ namespace Design_Patterns_Tekenprogramma
         public bool GetShapeClicked()
         {
             return shapeClicked;
+        }
+
+        public void Accept(SaveFileVisitor visitor)
+        {
+            visitor.Visit();
+        }
+
+        public Canvas GetCanvas()
+        {
+            return canvas;
         }
     }
 }

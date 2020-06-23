@@ -7,7 +7,7 @@ using System.Windows.Shapes;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    class MoveFinishedShapeGroup : Task
+    class MoveFinishedShapeGroup : ITask
     {
         private ShapeGroup shapeGroup;
 
@@ -18,7 +18,9 @@ namespace Design_Patterns_Tekenprogramma
 
         public void Execute()
         {
-            shapeGroup.MoveFinished();
+            //shapeGroup.MoveFinished();
+            MoveFinishedShapeVisitor sv = new MoveFinishedShapeVisitor();
+            shapeGroup.Accept(sv);
         }
 
         public void Undo()

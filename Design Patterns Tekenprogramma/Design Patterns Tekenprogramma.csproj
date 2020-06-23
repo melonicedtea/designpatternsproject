@@ -55,8 +55,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Class1.cs" />
+    <Compile Include="EnlargeShapeVisitor.cs" />
     <Compile Include="KeyVal.cs" />
     <Compile Include="MoveFinishedShapeGroup.cs" />
+    <Compile Include="MoveFinishedShapeVisitor.cs" />
+    <Compile Include="OrnamentShapeDecorator.cs" />
+    <Compile Include="RedFillShapeDecorator.cs" />
+    <Compile Include="SaveFileVisitor.cs" />
     <Compile Include="ShapeComponent.cs" />
     <Compile Include="LoadFile.cs" />
     <Compile Include="DrawFinishedShape.cs" />
@@ -67,9 +73,14 @@
     <Compile Include="MyShape.cs" />
     <Compile Include="Invoker.cs" />
     <Compile Include="EnlargeShape.cs" />
+    <Compile Include="ShapeDecorator.cs" />
     <Compile Include="ShapeGroup.cs" />
+    <Compile Include="MoveHoldShapeVisitor.cs" />
     <Compile Include="ShrinkShape.cs" />
-    <Compile Include="Task.cs" />
+    <Compile Include="ShrinkShapeVisitor.cs" />
+    <Compile Include="ITask.cs" />
+    <Compile Include="IVisitable.cs" />
+    <Compile Include="IVisitor.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
