@@ -30,7 +30,7 @@ namespace Design_Patterns_Tekenprogramma
             status3.IsChecked = true;//select-mode is checked by default
 
             LoadFile fileLoader = new LoadFile();
-            fileLoader.loadFile();
+           // fileLoader.loadFile();
 
 
         }
@@ -329,7 +329,8 @@ namespace Design_Patterns_Tekenprogramma
                 //invoker.DoTasks(); // do
 
 
-                shapeGroups[groupNumber].Accept(sv);
+                //shapeGroups[groupNumber].Accept(sv);
+                shapeGroups[groupNumber].MoveHold();
             }
 
             if (drag)

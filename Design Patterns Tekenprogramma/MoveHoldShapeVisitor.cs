@@ -20,27 +20,19 @@ namespace Design_Patterns_Tekenprogramma
         public void Visit(MyShape myShape)
         {
             Console.WriteLine("Shape Moved");
-            myShape.MoveHold();
-            //Shape currentShape = myShape.GetShape();
-            //Point newPos = Mouse.GetPosition(myWin.canvas);
+            //myShape.MoveHold();
+            Shape currentShape = myShape.GetShape();
+            Point newPos = Mouse.GetPosition(myWin.canvas);
 
-            //double x = Canvas.GetLeft(currentShape);
-            //double y = Canvas.GetTop(currentShape);
+            double x = Canvas.GetLeft(currentShape);
+            double y = Canvas.GetTop(currentShape);
 
-            //myShape.SetXY(x, y);
+            myShape.SetXY(x, y);
 
-            //Canvas.SetLeft(currentShape, x + (newPos.X - startPoint.X));
-            //Canvas.SetTop(currentShape, y + (newPos.Y - startPoint.Y));
+            Canvas.SetLeft(currentShape, x + (newPos.X - startPoint.X));
+            Canvas.SetTop(currentShape, y + (newPos.Y - startPoint.Y));
 
-            //Console.WriteLine("orn count: " + myShape.ornaments.Count);
-            //foreach(TextBlock ornament in myShape.ornaments)
-            //{
-            //    Console.WriteLine("Im HETE");
-            //    Canvas.SetLeft(ornament, x);
-            //    Canvas.SetTop(ornament, y);
-            //}
-
-            //startPoint = newPos;
+            startPoint = newPos;
         }
 
         public void Visit(ShapeGroup shapeGroup)
@@ -51,18 +43,20 @@ namespace Design_Patterns_Tekenprogramma
             Console.WriteLine(currentShapes.Count);
             foreach (ShapeComponent shapeComponent in currentShapes)
             {
-                System.Windows.Shapes.Shape currentShape = shapeComponent.GetShape();
+                Shape currentShape = shapeComponent.GetShape();
                 Point newPos = Mouse.GetPosition(myWin.canvas);
 
                 double x = Canvas.GetLeft(currentShape);
                 double y = Canvas.GetTop(currentShape);
-                Console.WriteLine(x.ToString());
-                Console.WriteLine(y.ToString());
+
+                //shapeComponent.SetXY(x, y);
 
                 Canvas.SetLeft(currentShape, x + (newPos.X - startPoint.X));
                 Canvas.SetTop(currentShape, y + (newPos.Y - startPoint.Y));
 
                 startPoint = newPos;
+
+
             }
         }
 

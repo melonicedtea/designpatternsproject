@@ -75,5 +75,7 @@ namespace Design_Patterns_Tekenprogramma
         {
             throw new NotSupportedException();
         }
+
+
     }
 }

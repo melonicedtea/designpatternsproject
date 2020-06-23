@@ -26,6 +26,7 @@ namespace Design_Patterns_Tekenprogramma
                 Canvas.SetLeft(shapeComponent.GetShape(), Canvas.GetLeft(shapeComponent.GetShape()));
                 Canvas.SetTop(shapeComponent.GetShape(), Canvas.GetTop(shapeComponent.GetShape()));
             }
+            //shapeGroup.MoveFinished();
         }
     }
 }
