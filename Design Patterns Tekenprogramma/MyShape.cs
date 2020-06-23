@@ -22,6 +22,10 @@ namespace Design_Patterns_Tekenprogramma
         double oldX;
         double oldY;
         string groupName;
+
+        public double h;
+        public double w;
+
         public List<TextBlock> ornaments = new List<TextBlock>();
 
         public IDrawStrategy drawStrategy;
@@ -112,8 +116,8 @@ namespace Design_Patterns_Tekenprogramma
             x = Math.Min(pos.X, startPoint.X);
             y = Math.Min(pos.Y, startPoint.Y);
 
-            var w = Math.Max(pos.X, startPoint.X) - x;
-            var h = Math.Max(pos.Y, startPoint.Y) - y;
+            w = Math.Max(pos.X, startPoint.X) - x;
+            h = Math.Max(pos.Y, startPoint.Y) - y;
 
             currentShape.Width = w;
             currentShape.Height = h;
@@ -126,6 +130,7 @@ namespace Design_Patterns_Tekenprogramma
         {
             if (!myWin.canvas.Children.Contains(currentShape))
             {
+                Canvas.SetBottom(currentShape, startPoint.Y + currentShape.Height);
                 myWin.canvas.Children.Add(currentShape);
 
             }
@@ -169,6 +174,16 @@ namespace Design_Patterns_Tekenprogramma
         {
             startPoint = myWin.GetStartPoint();
         }
+        public override void SetOldXY()
+        {
+            oldX = Canvas.GetLeft(currentShape);
+            oldY = Canvas.GetTop(currentShape);
+        }
+
+        public override Point GetOldXY()
+        {
+            return new Point(oldX, oldY);
+        }
         public Point GetStartPoint()
         {
             return startPoint;
@@ -200,12 +215,12 @@ namespace Design_Patterns_Tekenprogramma
             visitor.Visit(this);
         }
 
-        public void SetXY(double x, double y)
+        public override void SetXY(double x, double y)
         {
             this.x = x;
             this.y = y;
         }
-        public Point GetXY()
+        public override Point GetXY()
         {
             return new Point(x, y);
         }

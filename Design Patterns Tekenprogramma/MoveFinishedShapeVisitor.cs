@@ -10,7 +10,7 @@ namespace Design_Patterns_Tekenprogramma
 {
     class MoveFinishedShapeVisitor : IVisitor
     {
-        public void Visit(MyShape myShape)
+        public override void Visit(MyShape myShape)
         {
             Shape currentShape = myShape.GetShape();
             Canvas.SetLeft(currentShape, myShape.GetXY().X);
@@ -18,13 +18,15 @@ namespace Design_Patterns_Tekenprogramma
             //myShape.MoveFinished();
         }
 
-        public void Visit(ShapeGroup shapeGroup)
+        public override void Visit(ShapeGroup shapeGroup)
         {
             List<ShapeComponent> currentShapes = shapeGroup.GetComponents();
             foreach (ShapeComponent shapeComponent in currentShapes)
             {
-                Canvas.SetLeft(shapeComponent.GetShape(), Canvas.GetLeft(shapeComponent.GetShape()));
-                Canvas.SetTop(shapeComponent.GetShape(), Canvas.GetTop(shapeComponent.GetShape()));
+                Canvas.SetLeft(shapeComponent.GetShape(), shapeComponent.GetXY().X);
+                Canvas.SetTop(shapeComponent.GetShape(), shapeComponent.GetXY().Y);
+                Console.WriteLine("XY" + shapeComponent.GetXY().X +", " +shapeComponent.GetXY().Y);
+                Console.WriteLine("OLDXY" + shapeComponent.GetOldXY().X + ", " + shapeComponent.GetOldXY().Y);
             }
             //shapeGroup.MoveFinished();
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Shapes;
 
 namespace Design_Patterns_Tekenprogramma
@@ -76,6 +77,23 @@ namespace Design_Patterns_Tekenprogramma
             throw new NotSupportedException();
         }
 
+        public virtual void SetXY(double x, double y)
+        {
+            throw new NotSupportedException();
+        }
+        public virtual Point GetXY()
+        {
+            throw new NotSupportedException();
+        }
 
+        public virtual void SetOldXY()
+        {
+            throw new NotSupportedException();
+        }
+
+        public virtual Point GetOldXY()
+        {
+            throw new NotSupportedException();
+        }
     }
 }

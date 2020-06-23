@@ -19,7 +19,7 @@ namespace Design_Patterns_Tekenprogramma
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IVisitable
     {
 
         public MainWindow()
@@ -39,20 +39,21 @@ namespace Design_Patterns_Tekenprogramma
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             
-            foreach (Shape shape in canvas.Children)
-            {
-                string line =
-                    shape.Name + " " +
-                   (int)Canvas.GetLeft(shape) + " " +
-                    (int)Canvas.GetTop(shape) + " " +
-                    (int)shape.Width + " " +
-                    (int)shape.Height;
-                Console.WriteLine(line);
-                shapesListStrings.Add(line);
+            //foreach (Shape shape in canvas.Children)
+            //{
+            //    string line =
+            //        shape.Name + " " +
+            //       (int)Canvas.GetLeft(shape) + " " +
+            //        (int)Canvas.GetTop(shape) + " " +
+            //        (int)shape.Width + " " +
+            //        (int)shape.Height;
+            //    Console.WriteLine(line);
+            //    shapesListStrings.Add(line);
 
-            }
-            File.WriteAllLines("Mytxt.txt", shapesListStrings.ToArray());
-            shapesListStrings.Clear();
+            //}
+            //File.WriteAllLines("Mytxt.txt", shapesListStrings.ToArray());
+            //shapesListStrings.Clear();
+
             //SaveFileVisitor saveFileVisitor = new SaveFileVisitor();
             //Accept(saveFileVisitor);
         }
@@ -297,6 +298,7 @@ namespace Design_Patterns_Tekenprogramma
                     }
 
                     shapeGroups[groupNumber].SetStartPoint();
+                    shapeGroups[groupNumber].SetOldXY();
                 }
                 
 
@@ -656,9 +658,9 @@ namespace Design_Patterns_Tekenprogramma
             return shapeClicked;
         }
 
-        public void Accept(SaveFileVisitor visitor)
+        public void Accept(IVisitor visitor)
         {
-            visitor.Visit();
+            visitor.Visit(this);
         }
 
         public Canvas GetCanvas()

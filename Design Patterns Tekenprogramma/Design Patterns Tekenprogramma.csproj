@@ -73,7 +73,6 @@
     <Compile Include="MyShape.cs" />
     <Compile Include="Invoker.cs" />
     <Compile Include="EnlargeShape.cs" />
-    <Compile Include="ShapeDecorator.cs" />
     <Compile Include="ShapeGroup.cs" />
     <Compile Include="MoveHoldShapeVisitor.cs" />
     <Compile Include="ShrinkShape.cs" />

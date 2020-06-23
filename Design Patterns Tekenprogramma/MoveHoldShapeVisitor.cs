@@ -17,7 +17,7 @@ namespace Design_Patterns_Tekenprogramma
         Point startPoint;
 
         public MoveHoldShapeVisitor() { }
-        public void Visit(MyShape myShape)
+        public override void Visit(MyShape myShape)
         {
             Console.WriteLine("Shape Moved");
             //myShape.MoveHold();
@@ -35,7 +35,7 @@ namespace Design_Patterns_Tekenprogramma
             startPoint = newPos;
         }
 
-        public void Visit(ShapeGroup shapeGroup)
+        public override void Visit(ShapeGroup shapeGroup)
         {
             Console.WriteLine("Shapegroup Moved");
 
@@ -49,7 +49,7 @@ namespace Design_Patterns_Tekenprogramma
                 double x = Canvas.GetLeft(currentShape);
                 double y = Canvas.GetTop(currentShape);
 
-                //shapeComponent.SetXY(x, y);
+                shapeComponent.SetXY(x, y);
 
                 Canvas.SetLeft(currentShape, x + (newPos.X - startPoint.X));
                 Canvas.SetTop(currentShape, y + (newPos.Y - startPoint.Y));

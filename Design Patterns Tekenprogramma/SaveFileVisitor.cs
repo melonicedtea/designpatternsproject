@@ -14,17 +14,8 @@ namespace Design_Patterns_Tekenprogramma
 {
     public class SaveFileVisitor : IVisitor
     {
-        public void Visit(MyShape myShape)
-        {
-            throw new NotImplementedException();
-        }
 
-        public void Visit(ShapeGroup shapeGroup)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Visit()
+        public override void Visit(MainWindow mainWindow)
         {
 
 

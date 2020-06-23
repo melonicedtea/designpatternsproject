@@ -6,9 +6,19 @@ using System.Threading.Tasks;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    public interface IVisitor
+    public abstract class IVisitor
     {
-        void Visit(MyShape myShape);
-        void Visit(ShapeGroup shapeGroup);
+        public virtual void Visit(MyShape myShape)
+        {
+            throw new NotSupportedException();
+        }
+        public virtual void Visit(ShapeGroup shapeGroup)
+        {
+            throw new NotSupportedException();
+        }
+        public virtual void Visit(MainWindow mainWindow)
+        {
+            throw new NotSupportedException();
+        }
     }
 }

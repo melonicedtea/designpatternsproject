@@ -94,6 +94,21 @@ namespace Design_Patterns_Tekenprogramma
                 sc.SetStartPoint();
             }
         }
+        public override void SetXY(double x, double y)
+        {
+            foreach (ShapeComponent sc in shapeComponents)
+            {
+                sc.SetXY(x,y);
+            }
+        }
+
+        public override void SetOldXY()
+        {
+            foreach (ShapeComponent sc in shapeComponents)
+            {
+                sc.SetOldXY();
+            }
+        }
 
         public void Accept(IVisitor visitor)
         {

@@ -29,7 +29,7 @@ namespace Design_Patterns_Tekenprogramma
             textBlock.Text = text;
             textBlock.FontSize = 15;
             textBlock.Background = Brushes.AntiqueWhite;
-            string pos = "top";
+            string pos = "right";
             switch (pos)
             {
                 case "top":
@@ -41,12 +41,12 @@ namespace Design_Patterns_Tekenprogramma
                     Canvas.SetLeft(textBlock, decoratedMyShape.GetStartPoint().X - MeasureString(text).Width);
                     break;
                 case "bottom":
-                    Canvas.SetTop(textBlock, decoratedMyShape.GetStartPoint().Y );
-                    Canvas.SetLeft(textBlock, decoratedMyShape.GetStartPoint().X);
+                    Canvas.SetTop(textBlock, decoratedMyShape.GetXY().Y + decoratedMyShape.h);
+                    Canvas.SetLeft(textBlock, Canvas.GetLeft(decoratedMyShape.GetShape()));
                     break;
                 case "right":
-                    Canvas.SetTop(textBlock, decoratedMyShape.GetStartPoint().Y );
-                    Canvas.SetLeft(textBlock, decoratedMyShape.GetStartPoint().X);
+                    Canvas.SetTop(textBlock, decoratedMyShape.GetStartPoint().Y);
+                    Canvas.SetLeft(textBlock, decoratedMyShape.GetXY().X + decoratedMyShape.w);
                     break;
             }
 
