@@ -11,7 +11,7 @@ using System.Windows.Shapes;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    public class MyShape : ShapeComponent, IVisitable
+    public class MyShape : MyShapeComponent, IVisitable
     {
         static MainWindow myWin = (MainWindow)Application.Current.MainWindow;
         Point startPoint = Mouse.GetPosition(myWin.canvas);
@@ -19,14 +19,16 @@ namespace Design_Patterns_Tekenprogramma
         Shape currentShape;
         double x;
         double y;
-        double oldX;
-        double oldY;
-        string groupName;
+        public int groupNumber;
 
-        public double h;
-        public double w;
+        public double h = 0;
+        public double w = 0;
 
-        public List<TextBlock> ornaments = new List<TextBlock>();
+        public List<OrnamentShapeDecorator> decorators = new List<OrnamentShapeDecorator>();
+
+        public List<Point> points = new List<Point>();
+
+        public int moves = 0;
 
         public IDrawStrategy drawStrategy;
         public MyShape()
@@ -36,50 +38,69 @@ namespace Design_Patterns_Tekenprogramma
         public MyShape(Shape shape)
         {
             currentShape = shape;
-
-            oldX = Canvas.GetLeft(shape);
-            oldY = Canvas.GetTop(shape);
-
             x = Canvas.GetLeft(currentShape);
-            y = Canvas.GetTop(currentShape);
-
-            
+            y = Canvas.GetTop(currentShape);          
         }
 
         public override void MoveHold()
         {
-            newPos = Mouse.GetPosition(myWin.canvas);
-
-            x = Canvas.GetLeft(currentShape);
-            y = Canvas.GetTop(currentShape);
-
-            Canvas.SetLeft(currentShape, x + (newPos.X - startPoint.X));
-            Canvas.SetTop(currentShape, y + (newPos.Y - startPoint.Y));
-
-            startPoint = newPos;
-
-            Console.WriteLine("orn count: " + ornaments.Count);
-            foreach (TextBlock ornament in ornaments)
+            if (currentShape != null)
             {
-                Console.WriteLine("Im HETE");
-                Canvas.SetLeft(ornament, x);
-                Canvas.SetTop(ornament, y);
+                newPos = Mouse.GetPosition(myWin.canvas);
+
+                x = Canvas.GetLeft(currentShape);
+                y = Canvas.GetTop(currentShape);
+
+                Canvas.SetLeft(currentShape, x + (newPos.X - startPoint.X));
+                Canvas.SetTop(currentShape, y + (newPos.Y - startPoint.Y));
+
+                startPoint = newPos;
+            }
+
+            for(int i = 0; i < decorators.Count; i++)
+            {
+                decorators[i].MoveOrnament();
+            }
+                
+
+           
+        }
+
+        //public override void MoveFinished()
+        //{
+
+        //    Canvas.SetLeft(currentShape, x);
+        //    Canvas.SetTop(currentShape, y);
+        //}
+
+        public override void UndoMove()
+        {
+            moves--;
+            if (moves < 0)
+            {
+                moves = 0;
+            }
+            Canvas.SetLeft(currentShape, points[moves-1].X);
+            Canvas.SetTop(currentShape, points[moves-1].Y);
+
+            Console.WriteLine("moves: " + moves);
+
+            for (int i = 0; i < decorators.Count; i++)
+            {
+                decorators[i].UndoOrnament();
             }
         }
 
-        public override void MoveFinished()
+        public void RedoMove()
         {
+            moves++;
+            Canvas.SetLeft(currentShape, points[moves-1].X);
+            Canvas.SetTop(currentShape, points[moves-1].Y);
 
-            Canvas.SetLeft(currentShape, x);
-            Canvas.SetTop(currentShape, y);
-        }
-
-        public void UndoMove()
-        {
-
-            Canvas.SetLeft(currentShape, oldX);
-            Canvas.SetTop(currentShape, oldY);
-
+            for (int i = 0; i < decorators.Count; i++)
+            {
+                decorators[i].MoveOrnament();
+            }
         }
 
         public void SetDrawStrategy(IDrawStrategy newDrawStrategy)
@@ -90,13 +111,6 @@ namespace Design_Patterns_Tekenprogramma
         {
             Shape shapeToDraw = drawStrategy.GetDrawStrategy();
             currentShape = shapeToDraw;
-            //currentShape = new Rectangle()
-            //{
-            //    Stroke = Brushes.LightBlue,
-            //    StrokeThickness = 2,
-            //    Fill = new SolidColorBrush(Colors.AliceBlue)
-            //};
-
 
             myWin.AddShape(currentShape);
             //add functions
@@ -130,7 +144,6 @@ namespace Design_Patterns_Tekenprogramma
         {
             if (!myWin.canvas.Children.Contains(currentShape))
             {
-                Canvas.SetBottom(currentShape, startPoint.Y + currentShape.Height);
                 myWin.canvas.Children.Add(currentShape);
 
             }
@@ -146,62 +159,59 @@ namespace Design_Patterns_Tekenprogramma
 
         }
 
-        //public override void Enlarge()
-        //{
-        //    currentShape.Width *= 1.01;
-        //    currentShape.Height *= 1.01;
-        //}
-
-        public void UndoEnlarge()
+        public override void UndoEnlarge()
         {
             currentShape.Width *= 0.99;
             currentShape.Height *= 0.99;
+            w *= 0.99;
+            h *= 0.99;
+            for (int i = 0; i < decorators.Count; i++)
+            {
+                decorators[i].UndoOrnament();
+            }
         }
-
-        //public void Shrink()
-        //{
-        //    currentShape.Width *= 0.99;
-        //    currentShape.Height *= 0.99;
-        //}
         
-        public void UndoShrink()
+        public override void UndoShrink()
         {
             currentShape.Width *= 1.01;
             currentShape.Height *= 1.01;
+            h *= 1.01;
+            w *= 1.01;
+            for (int i = 0; i < decorators.Count; i++)
+            {
+                decorators[i].UndoOrnament();
+            }
         }
 
         public override void SetStartPoint()
         {
             startPoint = myWin.GetStartPoint();
         }
-        public override void SetOldXY()
+
+
+        public override void SetStrokeColor(SolidColorBrush color)
         {
-            oldX = Canvas.GetLeft(currentShape);
-            oldY = Canvas.GetTop(currentShape);
+            currentShape.Stroke = color;
         }
 
-        public override Point GetOldXY()
+        public void AddDecorator(OrnamentShapeDecorator d)
         {
-            return new Point(oldX, oldY);
+            decorators.Add(d);
         }
-        public Point GetStartPoint()
+        public void RemoveDecorator(OrnamentShapeDecorator d)
         {
-            return startPoint;
+            decorators.Remove(d);
         }
 
         public override void DisplayShapeInfo()
         {
-            Console.WriteLine(currentShape.Name + " inGroup: " + groupName);
+            Console.WriteLine(ToString());
         }
 
-        public override void SetGroupName(string groupName)
+        public void SetGroupNumber(int groupNumber)
         {
-            this.groupName = groupName;
+            this.groupNumber = groupNumber;
             
-        }
-        public void AddOrnament(TextBlock ornament)
-        {
-            ornaments.Add(ornament);
         }
 
         public override Shape GetShape()
@@ -209,20 +219,31 @@ namespace Design_Patterns_Tekenprogramma
             return currentShape;
         }
 
-        public void Accept(IVisitor visitor)
+        public override void Accept(Visitor visitor)
         {
-            Console.WriteLine("x: "+x+" y: "+y);
             visitor.Visit(this);
         }
 
-        public override void SetXY(double x, double y)
-        {
-            this.x = x;
-            this.y = y;
-        }
+        //public override void SetXY(double x, double y)
+        //{
+        //    this.x = x;
+        //    this.y = y;
+        //}
         public override Point GetXY()
         {
             return new Point(x, y);
+        }
+
+        public override string ToString()
+        {
+                return currentShape.Name + " " + Convert.ToInt32(x).ToString() + " " + Convert.ToInt32(y).ToString() + " " + Convert.ToInt32(w).ToString() + " " + Convert.ToInt32(h).ToString();
+        }
+
+        public override List<string> GetStrings()
+        {
+            List<string> strings = new List<string>();
+            strings.Add(ToString());
+            return strings;
         }
     }
 }

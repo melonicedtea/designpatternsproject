@@ -13,29 +13,35 @@
             <StackPanel>
                 <RadioButton Name="status1"
                   Height="16"
-                  Margin="10,45,0,0"
+                  Margin="10,20,0,0"
                   HorizontalAlignment="Left"
                   VerticalAlignment="Top"
                   Content="rect"
                              Checked="RadioButtonChecked"/>
-                <RadioButton Name="status2"
+                <RadioButton x:Name="status2"
                   Height="16"
-                  Margin="10,67,0,0"
-                  HorizontalAlignment="Left"
+                  Margin="0,20,25.333,0"
+                  HorizontalAlignment="Right"
                   VerticalAlignment="Top"
                   Content="ellipse" 
                              Checked="RadioButtonChecked"/>
-                <RadioButton Name="status3"
+                <RadioButton x:Name="status3"
                   Height="16"
-                  Margin="10,89,0,0"
-                  HorizontalAlignment="Left"
+                  Margin="10,20,28.333,0"
                   VerticalAlignment="Top"
                   Content="select" 
                              Checked="RadioButtonChecked"/>
-                
+                <RadioButton Name="status4"
+                  Height="16"
+                  Margin="10,20,0,0"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Top"
+                  Content="drag" 
+                             Checked="RadioButtonChecked"/>
+
             </StackPanel>
         </GroupBox>
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="20" Margin="0,325,0,0" TextWrapping="Wrap" Text="teefr" VerticalAlignment="Top" Width="94"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="20" Margin="0,325,0,0" TextWrapping="Wrap" Text="test" VerticalAlignment="Top" Width="94"/>
 
     </Grid>
 
