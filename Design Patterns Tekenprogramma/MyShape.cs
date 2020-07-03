@@ -11,30 +11,30 @@ using System.Windows.Shapes;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    public class MyShape : MyShapeComponent, IVisitable
+    public class MyShape : MyShapeComponent
     {
         static MainWindow myWin = (MainWindow)Application.Current.MainWindow;
-        Point startPoint = Mouse.GetPosition(myWin.canvas);
+        Point startPoint = Mouse.GetPosition(myWin.canvas); 
         Point newPos;
         Shape currentShape;
         double x;
         double y;
+
         public int groupNumber;
 
         public double h = 0;
         public double w = 0;
 
-        public List<OrnamentShapeDecorator> decorators = new List<OrnamentShapeDecorator>();
+        public List<OrnamentShapeDecorator> decorators = new List<OrnamentShapeDecorator>();// my decorations
 
-        public List<Point> points = new List<Point>();
+        public List<Point> points = new List<Point>();// history of points I've been
 
-        public int moves = 0;
+        public int moves = 0;// how many times I moved
 
-        public IDrawStrategy drawStrategy;
-        public MyShape()
-        {
+        private bool selected = false;// am i selected?
 
-        }
+        public IDrawStrategy drawStrategy;// what's my strategy, am I an ellipse or a rectangle?
+        public MyShape(){ }
         public MyShape(Shape shape)
         {
             currentShape = shape;
@@ -60,18 +60,8 @@ namespace Design_Patterns_Tekenprogramma
             for(int i = 0; i < decorators.Count; i++)
             {
                 decorators[i].MoveOrnament();
-            }
-                
-
-           
+            }          
         }
-
-        //public override void MoveFinished()
-        //{
-
-        //    Canvas.SetLeft(currentShape, x);
-        //    Canvas.SetTop(currentShape, y);
-        //}
 
         public override void UndoMove()
         {
@@ -149,7 +139,6 @@ namespace Design_Patterns_Tekenprogramma
             }
 
         }
-
         public void UndoDraw()
         {
             if (myWin.canvas.Children.Contains(currentShape))
@@ -158,7 +147,6 @@ namespace Design_Patterns_Tekenprogramma
             }
 
         }
-
         public override void UndoEnlarge()
         {
             currentShape.Width *= 0.99;
@@ -187,13 +175,10 @@ namespace Design_Patterns_Tekenprogramma
         {
             startPoint = myWin.GetStartPoint();
         }
-
-
         public override void SetStrokeColor(SolidColorBrush color)
         {
             currentShape.Stroke = color;
         }
-
         public void AddDecorator(OrnamentShapeDecorator d)
         {
             decorators.Add(d);
@@ -202,48 +187,39 @@ namespace Design_Patterns_Tekenprogramma
         {
             decorators.Remove(d);
         }
-
         public override void DisplayShapeInfo()
         {
             Console.WriteLine(ToString());
         }
-
         public void SetGroupNumber(int groupNumber)
         {
-            this.groupNumber = groupNumber;
-            
+            this.groupNumber = groupNumber;   
         }
-
         public override Shape GetShape()
         {
             return currentShape;
         }
-
         public override void Accept(Visitor visitor)
         {
             visitor.Visit(this);
         }
-
-        //public override void SetXY(double x, double y)
-        //{
-        //    this.x = x;
-        //    this.y = y;
-        //}
-        public override Point GetXY()
-        {
-            return new Point(x, y);
-        }
-
         public override string ToString()
         {
                 return currentShape.Name + " " + Convert.ToInt32(x).ToString() + " " + Convert.ToInt32(y).ToString() + " " + Convert.ToInt32(w).ToString() + " " + Convert.ToInt32(h).ToString();
         }
-
         public override List<string> GetStrings()
         {
             List<string> strings = new List<string>();
             strings.Add(ToString());
             return strings;
+        }
+        public override void SetSelected(bool b)
+        {
+            selected = b;
+        }
+        public bool GetSelected()
+        {
+            return selected;
         }
     }
 }

@@ -13,15 +13,17 @@ namespace Design_Patterns_Tekenprogramma
 {
     public class OrnamentShapeDecorator
     {
-        private static MainWindow myWin = (MainWindow)Application.Current.MainWindow;
+        //private static MainWindow myWin = (MainWindow)Application.Current.MainWindow;
         private MyShape decoratedMyShape;
         private string position;
         private string text;
-        public OrnamentShapeDecorator(MyShape decoratedMyShape, string position, string text)
+        private Canvas canvas;
+        public OrnamentShapeDecorator(MyShape decoratedMyShape, string position, string text, Canvas canvas)
         {
             this.decoratedMyShape = decoratedMyShape;
             this.text = text;
             this.position = position;
+            this.canvas = canvas;
             AddOrnament();
         }
         TextBlock textBlock = new TextBlock();
@@ -52,12 +54,12 @@ namespace Design_Patterns_Tekenprogramma
                     break;
             }
 
-            myWin.canvas.Children.Add(textBlock);
+            canvas.Children.Add(textBlock);
             decoratedMyShape.AddDecorator(this);
         }
         public void RemoveOrnament()
         {
-            myWin.canvas.Children.Remove(textBlock);
+            canvas.Children.Remove(textBlock);
             decoratedMyShape.RemoveDecorator(this);
         }
 
@@ -95,7 +97,7 @@ namespace Design_Patterns_Tekenprogramma
                     break;
             }
 
-            myWin.canvas.Children.Add(textBlock);
+            canvas.Children.Add(textBlock);
             decoratedMyShape.AddDecorator(this);
         }
         public void RedoOrnament()
@@ -124,7 +126,7 @@ namespace Design_Patterns_Tekenprogramma
                     break;
             }
 
-            myWin.canvas.Children.Add(textBlock);
+            canvas.Children.Add(textBlock);
             decoratedMyShape.AddDecorator(this);
         }
 

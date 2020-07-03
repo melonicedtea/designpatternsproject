@@ -7,9 +7,9 @@ using System.Windows.Media;
 
 namespace Design_Patterns_Tekenprogramma
 {
-    public class MyShapeGroup : MyShapeComponent, IVisitable
+    public class MyShapeGroup : MyShapeComponent
     {
-        List<MyShapeComponent> shapeComponents = new List<MyShapeComponent>();
+        List<MyShapeComponent> myShapeComponents = new List<MyShapeComponent>();
 
         string groupName;
         public int groupNumber;
@@ -23,21 +23,21 @@ namespace Design_Patterns_Tekenprogramma
 
         public string GetGroupName() { return groupName; }
 
-        public override void Add(MyShapeComponent shapeComponent)
+        public override void Add(MyShapeComponent msc)
         {
-            shapeComponents.Add(shapeComponent);
+            myShapeComponents.Add(msc);
         }
 
         public override List<MyShapeComponent> GetComponents()
         {
-            return shapeComponents;
+            return myShapeComponents;
         }
 
         public override void DisplayShapeInfo()
         {
-            Console.WriteLine("group " + shapeComponents.Count);
+            Console.WriteLine("group " + myShapeComponents.Count);
 
-            foreach(MyShapeComponent sc in shapeComponents)
+            foreach(MyShapeComponent sc in myShapeComponents)
             {
                 sc.DisplayShapeInfo();
             }
@@ -46,8 +46,8 @@ namespace Design_Patterns_Tekenprogramma
         public override List<string> GetStrings()
         {
             List<string> groupString = new List<string>();
-            groupString.Add("group " + shapeComponents.Count);
-            foreach (MyShapeComponent sc in shapeComponents)
+            groupString.Add("group " + myShapeComponents.Count);
+            foreach (MyShapeComponent sc in myShapeComponents)
             {
                 groupString.AddRange(sc.GetStrings());
             }
@@ -57,7 +57,7 @@ namespace Design_Patterns_Tekenprogramma
 
         public override void UndoEnlarge()
         {
-            foreach (MyShapeComponent sc in shapeComponents)
+            foreach (MyShapeComponent sc in myShapeComponents)
             {
                 sc.UndoEnlarge();
             }
@@ -65,7 +65,7 @@ namespace Design_Patterns_Tekenprogramma
 
         public override void MoveHold()
         {
-            foreach (MyShapeComponent sc in shapeComponents)
+            foreach (MyShapeComponent sc in myShapeComponents)
             {
                 sc.MoveHold();
             }
@@ -73,7 +73,7 @@ namespace Design_Patterns_Tekenprogramma
 
         public override void MoveFinished()
         {
-            foreach (MyShapeComponent sc in shapeComponents)
+            foreach (MyShapeComponent sc in myShapeComponents)
             {
                 MoveShapeVisitor sv = new MoveShapeVisitor();
                 sc.Accept(sv);
@@ -81,7 +81,7 @@ namespace Design_Patterns_Tekenprogramma
         }
         public override void UndoMove()
         {
-            foreach (MyShapeComponent sc in shapeComponents)
+            foreach (MyShapeComponent sc in myShapeComponents)
             {
                 sc.UndoMove();
             }
@@ -96,7 +96,7 @@ namespace Design_Patterns_Tekenprogramma
         //}
         public override void SetStartPoint()
         {
-            foreach (MyShapeComponent sc in shapeComponents)
+            foreach (MyShapeComponent sc in myShapeComponents)
             {
                 sc.SetStartPoint();
             }
@@ -104,7 +104,7 @@ namespace Design_Patterns_Tekenprogramma
 
         public override void SetStrokeColor(SolidColorBrush color)
         {
-            foreach (MyShapeComponent sc in shapeComponents)
+            foreach (MyShapeComponent sc in myShapeComponents)
             {
                 sc.SetStrokeColor(color);
             }
@@ -112,9 +112,18 @@ namespace Design_Patterns_Tekenprogramma
 
 
         public override void Accept(Visitor visitor)
-        { 
+        {
             visitor.Visit(this);
         }
 
+        public override void SetSelected(bool b)
+        {
+            foreach (MyShapeComponent sc in myShapeComponents)
+            {
+                sc.SetSelected(b);
+            }
+        }
+
+        
     }
 }

@@ -40,11 +40,6 @@ namespace Design_Patterns_Tekenprogramma
             };
             return rectangle; 
         }
-
-        public void showMessage()
-        {
-            Console.WriteLine("Draw RECTS");
-        }
     }
     public class DrawEllipsesStrategy : IDrawStrategy
     {
@@ -70,10 +65,6 @@ namespace Design_Patterns_Tekenprogramma
                 Fill = new SolidColorBrush(Colors.AliceBlue)
             };
             return ellipse;
-        }
-        public void showMessage()
-        {
-            Console.WriteLine("Draw elllleelel");
         }
     }
 }

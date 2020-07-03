@@ -11,7 +11,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-//using System.Windows.Navigation;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Design_Patterns_Tekenprogramma
@@ -28,22 +28,24 @@ namespace Design_Patterns_Tekenprogramma
             Closed += MainWindow_Closed;// handle close event: save file
             status3.IsChecked = true;//select-mode is checked by default
 
-            FileLoader fileLoader = new FileLoader();
-           // fileLoader.loadFile();
+            FileLoader fileLoader = new FileLoader(); 
+            fileLoader.loadFile();
         }
 
-        public List<MyShapeGroup> eatenGroups = new List<MyShapeGroup>();
+        public List<MyShapeGroup> addedGroups = new List<MyShapeGroup>();// temp fix
+        /// <summary>
+        /// When Window is closed save state to "Mytxt.txt"
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             List<string> shapesListStrings = new List<string>();
             List<MyShapeGroup> finalGroup = new List<MyShapeGroup>();
-            foreach (var item in eatenGroups)
-            {
-                Console.WriteLine("imeaten: " + item);
-            }
+
             foreach (MyShapeGroup group in existingGroups)
             {
-                if (!eatenGroups.Contains(group))
+                if (!addedGroups.Contains(group))
                 {
                     finalGroup.Add(group);
                 }             
@@ -53,10 +55,7 @@ namespace Design_Patterns_Tekenprogramma
             {
 
                 shapesListStrings.AddRange(group.GetStrings());
-
-                Console.WriteLine("IMIN" + group.groupNumber);
             }
-            //shapesListStrings.AddRange(finalGroup[0].GetStrings());
             foreach (MyShape ms in myShapes)
             {
                 if (ms.groupNumber == 999)
@@ -130,6 +129,10 @@ namespace Design_Patterns_Tekenprogramma
         public int uniqueGroupNumber = 0; // unique number to given to a group
         public MyShapeGroup currentGroup = null; // current selected group: {currentGroupNumber}
 
+        public List<MyShapeComponent> selectedShapes = new List<MyShapeComponent>();
+
+        Executor executor = new Executor();
+
         /// <summary>
         /// Handles radiobutton events
         /// 
@@ -144,9 +147,30 @@ namespace Design_Patterns_Tekenprogramma
                 return;
             mode = Convert.ToString(radioButton.Content.ToString());
 
-            if (existingShapes != null)
-                foreach (KeyVal<Shape, int> s in existingShapes)
-                    s.Id.Stroke = Brushes.LightBlue;
+            if (myShapes.Count > 0 && IsAnySelected())
+            {
+
+                UnselectShapes unselectShapeTask = new UnselectShapes(selectedShapes);
+                executor.AddTask(unselectShapeTask);
+                executor.DoTasks();
+
+                while (taskList.Count > taskCounter)
+                {
+                    taskList.RemoveAt(taskCounter);
+                }
+
+                taskCounter++;
+                taskList.Add(unselectShapeTask);
+
+                Console.WriteLine("counter: " + taskCounter);
+                Console.WriteLine("taskList counter: " + taskList.Count);
+                foreach (ITask t in taskList)
+                {
+                    Console.WriteLine(t);
+                }
+
+            }
+
         }
 
         /// <summary>
@@ -163,16 +187,30 @@ namespace Design_Patterns_Tekenprogramma
 
             if (mode == "select" && shapeClicked == false)
             {
-                if (existingShapes != null)
-                {
-                    foreach (KeyVal<Shape, int> s in existingShapes)
+                if (myShapes.Count > 0 && IsAnySelected())
+            {
+
+                    UnselectShapes unselectShapeTask = new UnselectShapes(selectedShapes);
+                    executor.AddTask(unselectShapeTask);
+                    executor.DoTasks();
+
+                    while (taskList.Count > taskCounter)
                     {
-                        s.Id.Stroke = Brushes.LightBlue;
+                        taskList.RemoveAt(taskCounter);
                     }
+
+                    taskCounter++;
+                    taskList.Add(unselectShapeTask);
+
+                    Console.WriteLine("counter: " + taskCounter);
+                    Console.WriteLine("taskList counter: " + taskList.Count);
+                    foreach (ITask t in taskList)
+                    {
+                        Console.WriteLine(t);
+                    }
+
                 }
 
-                //Console.WriteLine("-----------------------");
-                //existingGroups[0].DisplayShapeInfo();
             }
 
             if (mode == "rect" || mode == "ellipse")
@@ -228,7 +266,6 @@ namespace Design_Patterns_Tekenprogramma
                 Executor executor = new Executor();
                 executor.AddTask(drawFinishedShapeTask);// add
                 executor.DoTasks(); // do
-                Console.WriteLine("HEIGTH AT INIT: "+ myShape.h);
 
                 while (taskList.Count > taskCounter)
                 {
@@ -245,6 +282,8 @@ namespace Design_Patterns_Tekenprogramma
                     Console.WriteLine(t);
                 }
                 shape.ReleaseMouseCapture();
+
+                
             }
             draw = false;
         }
@@ -279,13 +318,7 @@ namespace Design_Patterns_Tekenprogramma
                         if (sc is MyShape)
                         {
                             MyShape ms = sc as MyShape;
-                            //foreach (KeyVal<Shape, int> s in existingShapes)
-                            //{
-                            //    if (ms.groupNumber == s.Text && s.Id == shape)
-                            //    {
-                            //            currentGroup = msg;
-                            //    }
-                            //}
+
                             if (ms.groupNumber == myShape.groupNumber)
                             {
                                 currentGroup = msg;
@@ -298,17 +331,64 @@ namespace Design_Patterns_Tekenprogramma
             
             if (mode == "select")
             {
+                bool group = false;
                 if (currentGroup != null)
                 {
-                    if (myShape.groupNumber == currentGroup.groupNumber)
+                    if (myShape.groupNumber == currentGroup.groupNumber && myShape.GetSelected() == false)
                     {
+                        group = true;
                         Console.WriteLine(currentGroup.groupNumber);
-                        currentGroup.SetStrokeColor(Brushes.Red);
+
+                        SelectShapeGroup selectShapeGroupTask = new SelectShapeGroup(currentGroup);
+                        executor.AddTask(selectShapeGroupTask);
+                        executor.DoTasks();
+                        while (taskList.Count > taskCounter)
+                        {
+                            taskList.RemoveAt(taskCounter);
+                        }
+
+                        taskCounter++;
+                        taskList.Add(selectShapeGroupTask);
+                        Console.WriteLine("counter: " + taskCounter);
+                        Console.WriteLine("taskList counter: " + taskList.Count);
+
+                        foreach (ITask t in taskList)
+                        {
+                            Console.WriteLine(t);
+                        }
+
+                        selectedShapes.Add(currentGroup);
+                    }                   
+                }
+                if (group == false)
+                {
+                    if (myShape.GetSelected() == false)
+                    {
+                        SelectShape selectShapeTask = new SelectShape(myShape);
+
+                        executor.AddTask(selectShapeTask);
+                        executor.DoTasks();
+                        while (taskList.Count > taskCounter)
+                        {
+                            taskList.RemoveAt(taskCounter);
+                        }
+
+                        taskCounter++;
+                        taskList.Add(selectShapeTask);
+                        Console.WriteLine("counter: " + taskCounter);
+                        Console.WriteLine("taskList counter: " + taskList.Count);
+
+                        foreach (ITask t in taskList)
+                        {
+                            Console.WriteLine(t);
+                        }
+
+                        selectedShapes.Add(myShape);
                     }
+                    
+
                 }
                 
-                myShape.SetStrokeColor(Brushes.Red);
-                Console.WriteLine(myShape.groupNumber);
             }
 
             if (mode == "drag")
@@ -428,27 +508,6 @@ namespace Design_Patterns_Tekenprogramma
             shape = sender as Shape;
             if (mode == "select")
             {
-                //if (existingGroups.Count > 0)
-                //{
-                //    foreach (MyShapeGroup msg in existingGroups)
-                //    {
-                //        foreach (MyShapeComponent sc in msg.GetComponents())
-                //        {
-                //            if (sc is MyShape)
-                //            {
-                //                MyShape ms = sc as MyShape;
-                //                foreach (KeyVal<Shape, int> s in existingShapes)
-                //                {
-                //                    if (ms.groupNumber == s.Text)
-                //                    {
-                //                        currentGroup = msg;
-                //                    }
-                //                }
-
-                //            }
-                //        }
-                //    }
-                //}
                 if (currentGroup != null)
                 {
                     if (myShape.groupNumber == currentGroup.groupNumber)
@@ -456,7 +515,6 @@ namespace Design_Patterns_Tekenprogramma
                         resizeGroup = true;
                     }
                 }
-                //myShape = new MyShape(shape);
                 if (resizeGroup == false)
                 {
                     if (e.Delta > 0)
@@ -616,47 +674,25 @@ namespace Design_Patterns_Tekenprogramma
                 executor.AddTask(makeGroupTask);// add
                 executor.DoTasks(); // do
 
-                while (taskList.Count > taskCounter)
-                {
-                    taskList.RemoveAt(taskCounter);
-                }
+                //while (taskList.Count > taskCounter)
+                //{
+                //    taskList.RemoveAt(taskCounter);
+                //}
 
-                taskCounter++;
-                taskList.Add(makeGroupTask);
-                Console.WriteLine("counter: " + taskCounter);
-                Console.WriteLine("taskList counter: " + taskList.Count);
+                //taskCounter++;
+                //taskList.Add(makeGroupTask);
+                //Console.WriteLine("counter: " + taskCounter);
+                //Console.WriteLine("taskList counter: " + taskList.Count);
 
 
 
-                foreach (ITask t in taskList)
-                {
-                    Console.WriteLine(t);
-                }
+                //foreach (ITask t in taskList)
+                //{
+                //    Console.WriteLine(t);
+                //}
 
             }
             bool group = false;
-            //if (existingGroups.Count > 0)
-            //{
-            //    foreach (MyShapeGroup msg in existingGroups)
-            //    {
-            //        foreach (MyShapeComponent sc in msg.GetComponents())
-            //        {
-            //            if (sc is MyShape)
-            //            {
-            //                MyShape ms = sc as MyShape;
-            //                foreach (KeyVal<Shape, int> s in existingShapes)
-            //                {
-            //                    if (ms.groupNumber == s.Text && s.Id == shape)
-            //                    {
-            //                        currentGroup = msg;
-            //                    }
-            //                }
-
-            //            }
-            //        }
-            //    }
-
-            //}
             if (currentGroup != null)
             {
                 if (myShape.groupNumber == currentGroup.groupNumber)
@@ -670,7 +706,7 @@ namespace Design_Patterns_Tekenprogramma
                 
                 if (!group)
                 {
-                    AddOrnament addOrnamentTask = new AddOrnament(myShape, "top", textBox.Text);
+                    AddOrnament addOrnamentTask = new AddOrnament(myShape, "top", textBox.Text, canvas);
                     Executor executor = new Executor();
                     executor.AddTask(addOrnamentTask);
                     executor.DoTasks();
@@ -691,7 +727,7 @@ namespace Design_Patterns_Tekenprogramma
                 }
                 if (group)
                 {
-                    AddOrnamentGroup addOrnamentTask = new AddOrnamentGroup(currentGroup, "top", textBox.Text);
+                    AddOrnamentGroup addOrnamentTask = new AddOrnamentGroup(currentGroup, "top", textBox.Text, canvas);
                     Executor executor = new Executor();
                     executor.AddTask(addOrnamentTask);
                     executor.DoTasks();
@@ -716,7 +752,7 @@ namespace Design_Patterns_Tekenprogramma
             {
                 if (!group)
                 {
-                    AddOrnament addOrnamentTask = new AddOrnament(myShape, "bottom", textBox.Text);
+                    AddOrnament addOrnamentTask = new AddOrnament(myShape, "bottom", textBox.Text, canvas);
                     Executor executor = new Executor();
                     executor.AddTask(addOrnamentTask);
                     executor.DoTasks();
@@ -737,7 +773,7 @@ namespace Design_Patterns_Tekenprogramma
                 }
                 if (group)
                 {
-                    AddOrnamentGroup addOrnamentTask = new AddOrnamentGroup(currentGroup, "bottom", textBox.Text);
+                    AddOrnamentGroup addOrnamentTask = new AddOrnamentGroup(currentGroup, "bottom", textBox.Text, canvas);
                     Executor executor = new Executor();
                     executor.AddTask(addOrnamentTask);
                     executor.DoTasks();
@@ -761,7 +797,7 @@ namespace Design_Patterns_Tekenprogramma
             {
                 if (!group)
                 {
-                    AddOrnament addOrnamentTask = new AddOrnament(myShape, "left", textBox.Text);
+                    AddOrnament addOrnamentTask = new AddOrnament(myShape, "left", textBox.Text, canvas);
                     Executor executor = new Executor();
                     executor.AddTask(addOrnamentTask);
                     executor.DoTasks();
@@ -782,7 +818,7 @@ namespace Design_Patterns_Tekenprogramma
                 }
                 if (group)
                 {
-                    AddOrnamentGroup addOrnamentTask = new AddOrnamentGroup(currentGroup, "left", textBox.Text);
+                    AddOrnamentGroup addOrnamentTask = new AddOrnamentGroup(currentGroup, "left", textBox.Text, canvas);
                     Executor executor = new Executor();
                     executor.AddTask(addOrnamentTask);
                     executor.DoTasks();
@@ -806,7 +842,7 @@ namespace Design_Patterns_Tekenprogramma
             {
                 if (!group)
                 {
-                    AddOrnament addOrnamentTask = new AddOrnament(myShape, "right", textBox.Text);
+                    AddOrnament addOrnamentTask = new AddOrnament(myShape, "right", textBox.Text, canvas);
                     Executor executor = new Executor();
                     executor.AddTask(addOrnamentTask);
                     executor.DoTasks();
@@ -827,7 +863,7 @@ namespace Design_Patterns_Tekenprogramma
                 }
                 if (group)
                 {
-                    AddOrnamentGroup addOrnamentTask = new AddOrnamentGroup(currentGroup, "right", textBox.Text);
+                    AddOrnamentGroup addOrnamentTask = new AddOrnamentGroup(currentGroup, "right", textBox.Text, canvas);
                     Executor executor = new Executor();
                     executor.AddTask(addOrnamentTask);
                     executor.DoTasks();
@@ -888,8 +924,24 @@ namespace Design_Patterns_Tekenprogramma
         {
             return startPoint;
         }
+        public bool IsAnySelected()
+        {
+            bool isAnySelected = false;
+            if (!isAnySelected)
+            {
+                foreach (KeyVal<Shape, int> s in existingShapes)
+                {
+                    if (s.Id.Stroke == Brushes.Red)
+                    {
+                        isAnySelected = true;
+                    }
+                }
+            }
+            return isAnySelected;
+           
+        }
 
-        //////////////////////////////////////////////////////VISITOR PATTERN ACCEPT
+        //////////////////////////////////////////////////////VISITOR PATTERN ACCEPT////////
         public void Accept(Visitor visitor)
         {
             visitor.Visit(this);

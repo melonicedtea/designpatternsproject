@@ -10,7 +10,7 @@ using System.Windows.Shapes;
 namespace Design_Patterns_Tekenprogramma
 {
 
-    public abstract class MyShapeComponent
+    public abstract class MyShapeComponent : IVisitable
     {
 
         public virtual void Add(MyShapeComponent shapeComponent)
@@ -63,20 +63,8 @@ namespace Design_Patterns_Tekenprogramma
             throw new NotSupportedException();
         }
 
-        //public virtual void SetGroupName(String groupName)
-        //{
-        //    throw new NotSupportedException();
-        //}
-        public virtual Shape GetShape()
-        {
-            throw new NotSupportedException();
-        }
 
-        //public virtual void SetXY(double x, double y)
-        //{
-        //    throw new NotSupportedException();
-        //}
-        public virtual Point GetXY()
+        public virtual Shape GetShape()
         {
             throw new NotSupportedException();
         }
@@ -99,6 +87,11 @@ namespace Design_Patterns_Tekenprogramma
         public virtual List<string> GetStrings()
         {
 
+            throw new NotSupportedException();
+        }
+
+        public virtual void SetSelected(bool b)
+        {
             throw new NotSupportedException();
         }
     }

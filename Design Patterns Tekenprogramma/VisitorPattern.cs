@@ -15,7 +15,7 @@ namespace Design_Patterns_Tekenprogramma
         {
             throw new NotSupportedException();
         }
-        public virtual void Visit(MyShapeGroup shapeGroup)
+        public virtual void Visit(MyShapeGroup myShapeGroup)
         {
             throw new NotSupportedException();
         }

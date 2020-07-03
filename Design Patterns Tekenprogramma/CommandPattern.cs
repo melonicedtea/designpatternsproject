@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -32,19 +33,19 @@ namespace Design_Patterns_Tekenprogramma
             taskList.Clear();
         }
     }
-
-    class DrawShape : ITask
+    class SelectShape : ITask
     {
-        private MyShape MyShape;
+        private MyShape myShape;
 
-        public DrawShape(MyShapeComponent ms)
+        public SelectShape(MyShapeComponent msc)
         {
-            MyShape = ms as MyShape;
+            myShape = msc as MyShape;
         }
 
         public void Execute()
         {
-            MyShape.DrawFinished();
+            myShape.SetStrokeColor(Brushes.Red);
+            myShape.SetSelected(true);
         }
 
         public void Redo()
@@ -54,7 +55,94 @@ namespace Design_Patterns_Tekenprogramma
 
         public void Undo()
         {
-            MyShape.UndoDraw();
+            myShape.SetStrokeColor(Brushes.LightBlue);
+            myShape.SetSelected(false);
+        }
+    }
+    class SelectShapeGroup : ITask
+    {
+        private MyShapeGroup myShapeGroup;
+
+        public SelectShapeGroup(MyShapeComponent msc)
+        {
+            myShapeGroup = msc as MyShapeGroup;
+        }
+
+        public void Execute()
+        {
+
+            myShapeGroup.SetStrokeColor(Brushes.Red);
+            myShapeGroup.SetSelected(true);
+        }
+
+        public void Redo()
+        {
+            Execute();
+        }
+
+        public void Undo()
+        {
+            myShapeGroup.SetStrokeColor(Brushes.LightBlue);
+            myShapeGroup.SetSelected(false);
+        }
+    }
+    class UnselectShapes : ITask
+    {
+        public List<MyShapeComponent> selectedShapes;
+
+
+        public UnselectShapes(List<MyShapeComponent> selectedShapes)
+        {
+            this.selectedShapes = selectedShapes;
+        }
+
+        public void Execute()
+        {
+            foreach (MyShapeComponent msc in selectedShapes)
+            {
+                msc.SetStrokeColor(Brushes.LightBlue);
+                msc.SetSelected(false);
+            }
+            
+        }
+
+        public void Redo()
+        {
+            Execute();
+        }
+
+        public void Undo()
+        {
+            Console.WriteLine("IMHERE"); 
+            foreach (MyShapeComponent msc in selectedShapes)
+            {
+                msc.SetStrokeColor(Brushes.Red);
+                msc.SetSelected(true);
+            }
+        }
+    }
+    class DrawShape : ITask
+    {
+        private MyShape myShape;
+
+        public DrawShape(MyShapeComponent msc)
+        {
+            myShape = msc as MyShape;
+        }
+
+        public void Execute()
+        {
+            myShape.DrawFinished();
+        }
+
+        public void Redo()
+        {
+            Execute();
+        }
+
+        public void Undo()
+        {
+            myShape.UndoDraw();
         }
     }
 
@@ -62,9 +150,9 @@ namespace Design_Patterns_Tekenprogramma
     {
         private MyShape myShape;
 
-        public MoveShape(MyShapeComponent shapeComponent)
+        public MoveShape(MyShapeComponent msc)
         {
-            myShape = shapeComponent as MyShape;
+            myShape = msc as MyShape;
         }
 
         public void Execute()
@@ -219,18 +307,20 @@ namespace Design_Patterns_Tekenprogramma
         private MyShape myShape;
         private string position;
         private string text;
+        private Canvas canvas;
         private OrnamentShapeDecorator decorator;
 
-        public AddOrnament(MyShapeComponent shapeComponent, string position, string textBoxText)
+        public AddOrnament(MyShapeComponent shapeComponent, string position, string textBoxText, Canvas canvas)
         {
             myShape = shapeComponent as MyShape;
             this.position = position;
             text = textBoxText;
+            this.canvas = canvas;
         }
 
         public void Execute()
         {
-            decorator = new OrnamentShapeDecorator(myShape, position, text);
+            decorator = new OrnamentShapeDecorator(myShape, position, text, canvas);
         }
 
         public void Redo()
@@ -248,21 +338,23 @@ namespace Design_Patterns_Tekenprogramma
         private MyShapeGroup myShapeGroup;
         private string position;
         private string text;
+        private Canvas canvas;
         private List<OrnamentShapeDecorator> decorators = new List<OrnamentShapeDecorator>();
         private OrnamentShapeDecorator decorator;
 
-        public AddOrnamentGroup(MyShapeComponent shapeComponent, string position, string textBoxText)
+        public AddOrnamentGroup(MyShapeComponent shapeComponent, string position, string textBoxText, Canvas canvas)
         {
             myShapeGroup = shapeComponent as MyShapeGroup;
             this.position = position;
             text = textBoxText;
+            this.canvas = canvas;
         }
 
         public void Execute()
         {
             foreach (MyShape ms in myShapeGroup.GetComponents())
             {
-                decorator = new OrnamentShapeDecorator(ms, position, text);
+                decorator = new OrnamentShapeDecorator(ms, position, text, canvas);
                 decorators.Add(decorator);
             }
         }
@@ -357,7 +449,7 @@ namespace Design_Patterns_Tekenprogramma
                             {
                                 myWin.existingGroups[myWin.currentGroup.groupNumber].Add(myWin.existingGroups[s.Text]);
                                 //myWin.existingGroups[s.Text].Add(myWin.existingGroups[myWin.currentGroup.groupNumber]);
-                                myWin.eatenGroups.Add(existingGroups[s.Text]);
+                                myWin.addedGroups.Add(existingGroups[s.Text]);
                             }
 
                         }
